@@ -1,4 +1,5 @@
 using KraftKollen.Components;
+using KraftKollen.Repository;
 
 namespace KraftKollen;
 
@@ -11,7 +12,8 @@ public class Program
         // Add services to the container.
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
-
+        builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri ("http://api.kolada.se/")});
+        builder.Services.AddScoped<IApiService, ApiService>();
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
