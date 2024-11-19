@@ -1,19 +1,20 @@
 @using Microsoft.AspNetCore.Components
 <h3>Select a Region</h3>
 
-<select @bind="selectedRegion" @onchange="Update">
+<select value="@selectedRegion" @onchange="Update">
 
     @foreach (var region in regions)
     {
     <option value="@region.Id">@region.Name</option>
     }
 </select>
-<p>Selected Region: @selectedRegion</p>
+ 
 
 @code {
     [Parameter] public bool SelectAll { get; set; }
     [Parameter] public EventCallback<List<string>> OnRegionsSelected { get; set; }
     private string selectedRegion;
+    
      private List<Region> regions = new List<Region>
     {
         new Region { Id = "0001", Name = "Region Stockholm" },
@@ -38,9 +39,12 @@
         new Region { Id = "0024", Name = "Region Västerbotten" },
         new Region { Id = "0025", Name = "Region Norrbotten" }
     };
+    
+    
 
     private async Task Update()
     {
+      
         await OnRegionsSelected.InvokeAsync([selectedRegion]);
     }
     
