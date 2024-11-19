@@ -278,6 +278,11 @@ ServiceFabricBackup/
 # Microsoft Fakes
 FakesAssemblies/
 
+# Ignore Rider-specific files and directories
+.idea/
+.idea_modules/
+*.sln.iml
+
 # GhostDoc plugin setting file
 *.GhostDoc.xml
 
