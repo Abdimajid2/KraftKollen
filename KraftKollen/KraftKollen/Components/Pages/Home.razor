@@ -1,12 +1,44 @@
-﻿@page "/" 
+﻿@page "/"
+@using KraftKollen.Repository
+@using KraftKollen.Repository.Models
 @inject IApiService ApiService
 
-
+@if(test != null)
+{
+     @foreach (var value in test.values)
+     {
+         <p>@value.kpi</p>
+         <p>kommun id: @value.municipality</p>
+         <p>år:  @value.period</p>
+         if (value.values != null)
+         {
+             @foreach(var val in value.values)
+             {
+                 <p>@val.count</p>
+                 <p>@val.gender</p>
+                 <p>@val.status</p>
+                 <p>hur mycket el producerats: @val.value</p>
+             }
+         }
+     }
+}
+<GetDataByYearComponent></GetDataByYearComponent>
+<GetDataByRegionComponent OnRegionsSelected="UpdateRegion"></GetDataByRegionComponent>
  
 @code
 {
+    private string? region;
+    private string? year;
+    
+    private async Task UpdateRegion(List<string> selectedRegions)
+    {
+        region = selectedRegions.FirstOrDefault();
+        var test = 4;
+    }
+    private WindPowerProductionDTO test;
      protected override async Task OnInitializedAsync()
      {
-         await ApiService.GetWindPowerProduction();
+          test= await ApiService.GetWindPowerProduction("1860", "2020");
+        var test2 = 0;
      }
 }
