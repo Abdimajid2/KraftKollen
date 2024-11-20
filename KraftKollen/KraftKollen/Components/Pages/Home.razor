@@ -1,4 +1,6 @@
-﻿@page "/"
+﻿@rendermode InteractiveServer
+
+@page "/"
 @using KraftKollen.Repository
 @using KraftKollen.Repository.Models
 @inject IApiService ApiService
@@ -30,9 +32,9 @@
     private string? region;
     private string? year;
     
-    private async Task UpdateRegion(List<string> selectedRegions)
+    private async Task UpdateRegion(string selectedRegions)
     {
-        region = selectedRegions.FirstOrDefault();
+        region = selectedRegions;
         var test = 4;
     }
     private WindPowerProductionDTO test;
