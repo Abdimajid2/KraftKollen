@@ -1,22 +1,29 @@
+@using Microsoft.AspNetCore.Components
 @rendermode InteractiveServer
 
 <h3>Select a Year</h3>
 
-<select @bind="selectedYear">
+<select value="selectedYear"  @onchange="(e => Update(e))">
     @foreach (var year in years)
     {
         <option value="@year">@year</option>
     }
 </select>
-
-<p>You selected: @selectedYear</p>
-
 @code {
-    private int selectedYear;
-
-    private List<int> years = new List<int>
+    private string selectedYear;
+    [Parameter] public EventCallback<string> OnYearSelected { get; set; }
+    private List<string> years = new List<string>
     {
-        2019, 2020, 2021, 2022, 2023, 2024
+        "2019", "2020", "2021", "2022", "2023", "2024"
     };
+    
+    private async Task Update(ChangeEventArgs e)
+    {
+        selectedYear = e.Value?.ToString();
+        if (!string.IsNullOrEmpty(selectedYear))
+        {
+            await OnYearSelected.InvokeAsync(selectedYear);
+        }
+    }
 
 }
