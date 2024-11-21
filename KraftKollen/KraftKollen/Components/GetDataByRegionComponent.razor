@@ -1,5 +1,6 @@
 @rendermode InteractiveServer
 
+@using KraftKollen.Models
 @using Microsoft.AspNetCore.Components
 <h3>Select a Region</h3>
 
@@ -58,10 +59,6 @@
         var region = regions.FirstOrDefault(r => r.Id == regionId);
         return region != null ? region.Name : "No region selected";
     }
-    public class Region
-    {
-        public string Id { get; set; }
-        public string Name { get; set; }
-    }
+     
 
 }
