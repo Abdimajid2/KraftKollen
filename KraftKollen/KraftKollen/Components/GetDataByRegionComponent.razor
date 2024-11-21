@@ -1,7 +1,9 @@
+@rendermode InteractiveServer
+
 @using Microsoft.AspNetCore.Components
 <h3>Select a Region</h3>
 
-<select value="@selectedRegion" @onchange="Update">
+<select value="@selectedRegion" @onchange="(e => Update(e))">
 
     @foreach (var region in regions)
     {
@@ -12,7 +14,7 @@
 
 @code {
     [Parameter] public bool SelectAll { get; set; }
-    [Parameter] public EventCallback<List<string>> OnRegionsSelected { get; set; }
+    [Parameter] public EventCallback<string> OnRegionsSelected { get; set; }
     private string selectedRegion;
     
      private List<Region> regions = new List<Region>
@@ -42,10 +44,13 @@
     
     
 
-    private async Task Update()
+    private async Task Update(ChangeEventArgs e)
     {
-      
-        await OnRegionsSelected.InvokeAsync([selectedRegion]);
+        selectedRegion = e.Value?.ToString();
+        if (!string.IsNullOrEmpty(selectedRegion))
+        {
+            await OnRegionsSelected.InvokeAsync(selectedRegion);
+        }
     }
     
     public string GetRegionName(string regionId)
