@@ -1,0 +1,28 @@
+@using KraftKollen.Models
+@using Microsoft.AspNetCore.Components
+@rendermode InteractiveServer
+
+ 
+<input type="checkbox" value="@selectAll"  @onchange="(e => SelectAllRegions(e))"> Välj alla regioner
+ 
+@code {
+    [Parameter] public EventCallback<List<string>> OnAllRegionsSelected { get; set; }
+    private bool selectAll;
+    private List<Region> regions = AllRegions.GetAllRegions();
+    
+    private async Task SelectAllRegions(ChangeEventArgs e)
+    {
+        if (e.Value is bool isChecked)
+        {
+            selectAll = isChecked;
+            
+            if (selectAll)
+            {
+                var allRegionIds = regions.Select(r => r.Id).ToList();
+                await OnAllRegionsSelected.InvokeAsync(allRegionIds);
+            }
+           
+        }
+    }
+     
+}
