@@ -3,8 +3,9 @@
 @page "/"
 @using KraftKollen.Repository
 @using KraftKollen.Repository.Models
-@inject IApiService ApiService
-
+@using KraftKollen.Components.Components
+@using KraftKollen.Components.Layout
+@inject IApiService ApiService 
 @if (test != null)
 {
 
@@ -45,8 +46,10 @@
 }
 <GetDataByYearComponent OnYearSelected="UpdateYear"></GetDataByYearComponent>
 <GetDataByRegionComponent OnRegionsSelected="UpdateRegion"></GetDataByRegionComponent>
+<SelectAllRegionsComponent OnAllRegionsSelected="UpdateRegions"></SelectAllRegionsComponent>
+ <SelectMultipleRegions OnRegionsSelected="HandleSelectedRegions"></SelectMultipleRegions>
 <p>ID på regionen: @region</p>
-<p>Valt år: @year</p>
+<p>Valt år: @year </p>
 
 @code
 {
@@ -54,12 +57,27 @@
     private string? year;
     private WindPowerProductionDTO test;
 
+    private async Task HandleSelectedRegions(List<string> selectedRegions)
+    {
+        region = string.Join(", ", selectedRegions);
+        await FetchWindPowerData();
+    }
+    
+    
     private async Task UpdateRegion(string selectedRegions)
     {
         region = selectedRegions;
         await FetchWindPowerData();
     }
-
+    
+    private async Task UpdateRegions(List<string> selectedRegions)
+    {
+         
+        region = string.Join(", ", selectedRegions);
+        await FetchWindPowerData();
+    }
+     
+ 
     private async Task UpdateYear(string selectedYear)
     {
         year = selectedYear;
