@@ -1,0 +1,33 @@
+@code {
+    private List<int> years = new List<int> { 2016, 2017, 2018, 2019, 2020, 2021 };
+    private int selectedYear1;
+    private int selectedYear2;
+
+    [Parameter]
+    public EventCallback<(int, int)> OnYearsSelected { get; set; }
+
+    private async Task FetchData()
+    {
+        await OnYearsSelected.InvokeAsync((selectedYear1, selectedYear2));
+    }
+}
+
+
+<h3>Select Years to Compare</h3>
+
+<select @bind="selectedYear1">
+    @foreach (var year in years)
+    {
+        <option value="@year">@year</option>
+    }
+</select>
+
+<select @bind="selectedYear2">
+    @foreach (var year in years)
+    {
+        <option value="@year">@year</option>
+    }
+</select>
+
+<p>You selected: @selectedYear1 and @selectedYear2</p>
+<button @onclick="FetchData">Fetch Data</button>
