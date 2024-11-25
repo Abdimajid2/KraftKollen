@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="View\Models\" />
+      <Folder Include="Services\" />
     </ItemGroup>
 
     <ItemGroup>
@@ -15,11 +15,22 @@
       <_ContentIncludedByDefault Remove="Components\Pages\Home.razor" />
       <_ContentIncludedByDefault Remove="View\Pages\Error.razor" />
       <_ContentIncludedByDefault Remove="View\Pages\Home.razor" />
+      <_ContentIncludedByDefault Remove="View\Template.razor" />
+      <_ContentIncludedByDefault Remove="Components\View\Pages\Error.razor" />
+      <_ContentIncludedByDefault Remove="Components\View\Pages\Home.razor" />
     </ItemGroup>
 
     <ItemGroup>
-      <AdditionalFiles Include="Components\Pages\Error.razor" />
-      <AdditionalFiles Include="Components\Pages\Home.razor" />
+      <PackageReference Include="bunit" Version="2.0.33-preview" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="Components\View\Template.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <UpToDateCheckInput Remove="Components\Pages\Error.razor" />
+      <UpToDateCheckInput Remove="Components\Pages\Home.razor" />
     </ItemGroup>
 
 </Project>

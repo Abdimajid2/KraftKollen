@@ -1,0 +1,46 @@
+@using KraftKollen.Models
+@using Microsoft.AspNetCore.Components
+@rendermode InteractiveServer
+@* <div> *@
+@*     <label> *@
+@*         <input type="checkbox" @bind="isMultiSelectEnabled" /> Gör flera val *@
+@*     </label> *@
+@* </div> *@
+
+@* @if (isMultiSelectEnabled) *@
+@* { *@
+    @foreach (var region in regions)
+    {
+        <div>
+            <input type="checkbox"  @onchange="(e => SelectedRegions(region.Id, e))"> (@region.Name)
+        </div>
+    }
+@* } *@
+ 
+@code {
+    [Parameter] public EventCallback<List<string>> OnRegionsSelected { get; set; }
+    private List<Region> regions = AllRegions.GetAllRegions();
+    private bool isMultiSelectEnabled = false;
+    private List<string> selectedRegionIds = new List<string>(); // Håller koll på valda regioner
+    private async Task SelectedRegions(string regionId,ChangeEventArgs e)
+    {
+        if (e.Value is bool isChecked)
+        {
+            if (isChecked)
+            {
+                //om bool är true så lägg till regionId i listan
+                selectedRegionIds.Add(regionId);
+            }
+            else
+            {
+            
+                selectedRegionIds.Remove(regionId);
+            }
+
+            // Skicka den uppdaterade listan till föräldrakomponenten
+            await OnRegionsSelected.InvokeAsync(selectedRegionIds);
+        }
+    }
+
+
+}
