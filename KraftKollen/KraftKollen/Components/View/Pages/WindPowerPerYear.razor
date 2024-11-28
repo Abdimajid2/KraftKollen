@@ -1,4 +1,4 @@
-@rendermode InteractiveServer
+ï»¿@rendermode InteractiveServer
 @using KraftKollen.Components.Components
 @using KraftKollen.Models
 @using KraftKollen.Repository
@@ -8,10 +8,10 @@
 @page "/WindPowerPerYear"
 
 
-    <h3>Elproduktion per år</h3> 
+    <h3>Elproduktion per Ã¥r</h3> 
 
     <select @bind="selectedYearOne">
-        <option disabled value="0">-- Välj ett år --</option>
+        <option disabled value="0">-- VÃ¤lj ett Ã¥r --</option>
        
         @foreach (var year in years)
         {
@@ -20,7 +20,7 @@
     </select>
 
     <select @bind="selectedYearTwo">
-    <option disabled value="0">-- Välj ett år --</option>
+    <option disabled value="0">-- VÃ¤lj ett Ã¥r --</option>
 
     @foreach (var year in years)
     {
@@ -28,47 +28,43 @@
     }
     </select>
 
-    <button @onclick="FetchTotalProduction">Hämta data</button>
+    <button @onclick="FetchTotalProduction">HÃ¤mta data</button>
 
     @if (totalProductionYearOne > 0 && totalProductionYearTwo > 0)
     {
-        <h5 style="margin-top: 20px;">Total elproduktoin från våra 21 regioners vindkraftverk. </h5>
-        <p>År: @selectedYearOne: @totalProductionYearOne MWh.</p>
-        <p>År: @selectedYearTwo: @totalProductionYearTwo MWh.</p>
+        <h5 style="margin-top: 20px;">Total elproduktion frÃ¥n vÃ¥ra 21 regioners vindkraftverk. </h5>
+        <p>Ã…r: @selectedYearOne: @totalProductionYearOne Gwh (@(totalProductionYearOne * 1000) Mwh)</p>
+        <p>Ã…r: @selectedYearTwo: @totalProductionYearTwo Gwh (@(totalProductionYearTwo * 1000) Mwh).</p>
         
-    }
-
-  
+    }  
 
 
 @code {
 
     private List<int> years = new List<int> { 2016, 2017, 2018, 2019, 2020, 2021, 2022 };
+
     private int selectedYearOne;
     private int selectedYearTwo;
+
     private double totalProductionYearOne;
     private double totalProductionYearTwo;
 
     private async Task FetchTotalProduction()
     {
-        if (selectedYearOne == 0)
+        if (selectedYearOne == 0 || selectedYearTwo == 0)
         {
-            // Hantera fel om inget år valts
-            totalProductionYearOne = 0;
+            // Om inget av ï¿½ren valts
+            totalProductionYearOne = selectedYearOne == 0 ? 0 : totalProductionYearOne;
+            totalProductionYearTwo = selectedYearTwo == 0 ? 0 : totalProductionYearTwo;
             return;
         }
 
-        if (selectedYearTwo == 0)
-        {
-            
-            totalProductionYearTwo = 0;
-            return;
-        }
-
+        // Visa om bï¿½da ï¿½ren valts
         totalProductionYearOne = await CalculateTotalProductionForYear(selectedYearOne);
         totalProductionYearTwo = await CalculateTotalProductionForYear(selectedYearTwo);
     }
 
+    //BerÃ¤kna totalproduktion per Ã¥r
     private async Task<double> CalculateTotalProductionForYear(int year)
     {
         double total = 0;
@@ -78,7 +74,7 @@
         {
             try
             {
-                // Hämta data för regionen och året
+                // Hï¿½mta data fÃ¶r regionen och Ã¥ret
                 var production = await GetWindPowerProduction(region.Id, year.ToString());
 
                 if (production?.values != null)
@@ -88,34 +84,29 @@
                         if (value.values != null)
                         {
                             total += value.values
-                                .Where(v => v.value.HasValue) // Kontrollera att värde finns
-                                .Sum(v => v.value.Value);    // Summera alla värden
+                                .Where(v => v.value.HasValue) // Kontrollera att vÃ¤rde finns
+                                .Sum(v => v.value.Value);  // Summera alla vÃ¤rden
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Fel vid hämtning för region {region.Name}: {ex.Message}");
+                Console.WriteLine($"Fel vid hÃ¤mtning av {region.Name}: {ex.Message}");
             }
         }
 
         return total;
     }
 
+    private void CalculateResultInGigaWatt()
+    {
+        totalProductionYearOne /= 1000;
+        totalProductionYearTwo /= 1000;
+    }
+
     public async Task<WindPowerProductionDTO> GetWindPowerProduction(string regionId, string year)
     {        
         return await _httpClient.GetFromJsonAsync<WindPowerProductionDTO>($"http://api.kolada.se/v2/data/kpi/N45904/municipality/{regionId}/year/{year}");
     }
-
-  
-
-    
-
-
-
-
-
-
-
 }
