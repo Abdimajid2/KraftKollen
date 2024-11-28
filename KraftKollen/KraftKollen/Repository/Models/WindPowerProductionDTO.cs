@@ -18,6 +18,6 @@ public class WindPowerProductionDTO
         public int count { get; set; }
         public string gender { get; set; }
         public string status { get; set; }
-        public double value { get; set; }
+        public double? value { get; set; }
     }
 }
