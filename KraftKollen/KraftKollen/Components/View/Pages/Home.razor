@@ -8,6 +8,24 @@
 @inject IApiService ApiService 
 @if (test != null)
 {
+
+     @foreach (var value in test.values)
+     {
+         <p>@value.kpi</p>
+         <p>kommun id: @value.municipality</p>
+         <p>år:  @value.period</p>
+         if (value.values != null)
+         {
+             @foreach(var val in value.values)
+             {
+                 <p>@val.count</p>
+                 <p>@val.gender</p>
+                 <p>@val.status</p>
+                 <p>hur mycket el som producerats: @val.value</p>
+             }
+         }
+     }
+
     @foreach (var value in test.values)
     {
         <p>@value.kpi</p>
@@ -24,6 +42,7 @@
             }
         }
     }
+
 }
 <GetDataByYearComponent OnYearSelected="UpdateYear"></GetDataByYearComponent>
 <GetDataByRegionComponent OnRegionsSelected="UpdateRegion"></GetDataByRegionComponent>
