@@ -13,8 +13,8 @@ public class ApiService : IApiService
     
     public async Task<WindPowerProductionDTO> GetWindPowerProduction(string municipality, string year)
     {
-        
-        return await _httpClient.GetFromJsonAsync<WindPowerProductionDTO>($"http://api.kolada.se/v2/data/kpi/N45904/municipality/{municipality}/year/{year}");
+        var result = await _httpClient.GetFromJsonAsync<WindPowerProductionDTO>($"http://api.kolada.se/v2/data/kpi/N45904/municipality/{municipality}/year/{year}");
+        return result;
   
     }
 
