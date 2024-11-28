@@ -3,7 +3,7 @@ namespace KraftKollen.Repository.Models;
 public class WindPowerProductionDTO
 {
     public int count { get; set; }
-    public Values[] values { get; set; }
+    public Values[]? values { get; set; }
 
     public class Values
     {
@@ -18,6 +18,6 @@ public class WindPowerProductionDTO
         public int count { get; set; }
         public string gender { get; set; }
         public string status { get; set; }
-        public double value { get; set; }
+        public double? value { get; set; }
     }
 }

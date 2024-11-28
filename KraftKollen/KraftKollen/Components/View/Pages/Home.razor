@@ -20,17 +20,27 @@
                 <p>@val.count</p>
                 <p>@val.gender</p>
                 <p>@val.status</p>
-                <p>hur mycket el producerats: @val.value</p>
+                
+                
+                @if (val.value == null)
+                {
+                    <p>Det finns ingen data för detta år</p>
+                }
+                else
+                {
+                    <p>hur mycket el producerats: @val.value</p>
+                }
+
             }
         }
     }
 }
 <GetDataByYearComponent OnYearSelected="UpdateYear"></GetDataByYearComponent>
 <GetDataByRegionComponent OnRegionsSelected="UpdateRegion"></GetDataByRegionComponent>
-<SelectAllRegionsComponent OnAllRegionsSelected="UpdateRegions"></SelectAllRegionsComponent>
-<SelectMultipleRegions OnRegionsSelected="HandleSelectedRegions"></SelectMultipleRegions>
-<GetMultipleYearsComponent OnYearsSelected="HandleSelectedYears"></GetMultipleYearsComponent>
-<GetTwoYearsComponent OnTwoYearsSelected ="HandleTwoYears"></GetTwoYearsComponent>
+@* <SelectAllRegionsComponent OnAllRegionsSelected="UpdateRegions"></SelectAllRegionsComponent> *@
+@* <SelectMultipleRegions OnRegionsSelected="HandleSelectedRegions"></SelectMultipleRegions> *@
+@* <GetMultipleYearsComponent OnYearsSelected="HandleSelectedYears"></GetMultipleYearsComponent> *@
+@* <GetTwoYearsComponent OnTwoYearsSelected ="HandleTwoYears"></GetTwoYearsComponent> *@
 <p>ID på regionen: @region</p>
 <p>Valt år: @year </p>
 
@@ -40,39 +50,39 @@
     private string? year;
     private WindPowerProductionDTO test;
 
-    private async Task HandleSelectedRegions(List<string> selectedRegions)
-    {
-        region = string.Join(", ", selectedRegions);
-        await FetchWindPowerData();
-    }
-    
-    private async Task HandleSelectedYears((int, int) selectedYears)
-    {
-        year = $"{selectedYears.Item1}-{selectedYears.Item2}";
-        await FetchWindPowerData();
-    }
-    
-    private async Task HandleTwoYears((int, int) selectedTwoYears)
-    {
-        year = $"{selectedTwoYears.Item1}, {selectedTwoYears.Item2}";
-        await FetchWindPowerData();
-    }
-    
-    
+    // private async Task HandleSelectedRegions(List<string> selectedRegions)
+    // {
+    //     region = string.Join(", ", selectedRegions);
+    //     await FetchWindPowerData();
+    // }
+    //
+    // private async Task HandleSelectedYears((int, int) selectedYears)
+    // {
+    //     year = $"{selectedYears.Item1}-{selectedYears.Item2}";
+    //     await FetchWindPowerData();
+    // }
+    //
+    // private async Task HandleTwoYears((int, int) selectedTwoYears)
+    // {
+    //     year = $"{selectedTwoYears.Item1}, {selectedTwoYears.Item2}";
+    //     await FetchWindPowerData();
+    // }
+    //
+    //
     private async Task UpdateRegion(string selectedRegions)
     {
         region = selectedRegions;
         await FetchWindPowerData();
     }
-    
-    private async Task UpdateRegions(List<string> selectedRegions)
-    {
-         
-        region = string.Join(", ", selectedRegions);
-        await FetchWindPowerData();
-    }
-     
- 
+    //
+    // private async Task UpdateRegions(List<string> selectedRegions)
+    // {
+    //      
+    //     region = string.Join(", ", selectedRegions);
+    //     await FetchWindPowerData();
+    // }
+    //  
+    //
     private async Task UpdateYear(string selectedYear)
     {
         year = selectedYear;
@@ -85,7 +95,7 @@
         {
             return false;
         }
-
+    
         return true;
     }
 
