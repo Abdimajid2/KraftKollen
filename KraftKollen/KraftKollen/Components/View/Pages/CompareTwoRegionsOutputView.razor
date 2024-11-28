@@ -1,0 +1,125 @@
+﻿@rendermode InteractiveServer
+
+@page "/CompareTwoRegionsOutputView"
+@using KraftKollen.Components.Components
+@using KraftKollen.Models
+@using KraftKollen.Repository
+@using KraftKollen.Repository.Models
+@inject IApiService ApiService
+
+<h3>CompareTwoRegionsOutputView</h3>
+
+<GetTwoYearsComponent OnTwoYearsSelected="GetYears" />
+
+@if (_firstYearLargestValue != null)
+{
+    <h3>@_firstYearLargestValue.year</h3>
+    <p>@_firstYearLargestValue.Name: @_firstYearLargestValue.Value MWh</p>
+}
+
+@if (_secondYearLargestValue != null)
+{
+    <h3>@_secondYearLargestValue.year</h3>
+    <p>@_secondYearLargestValue.Name: @_secondYearLargestValue.Value MWh</p>
+}
+
+
+@code {
+    private List<Region> regions = AllRegions.GetAllRegions();
+
+    private RegionWithValue _firstYearLargestValue;
+    private RegionWithValue _secondYearLargestValue;
+
+    private async Task GetYears((int, int) selectedTwoYears)
+    {
+        var firstYear = selectedTwoYears.Item1.ToString();
+        var secondYear = selectedTwoYears.Item2.ToString();
+
+        var zeroAsString = "0";
+
+        RegionWithValue firstYearLargestValue = new() { Value = 0 };
+        RegionWithValue secondYearLargestValue = new() { Value = 0 };
+
+
+        foreach (var region in regions)
+        {
+
+            if (firstYear != zeroAsString)
+            {
+                var result = await FetchWindPowerData(region.Id, firstYear);
+                foreach (var valueGroup in result.values) // Loop through the outer Values array
+                {
+                    foreach (var innerValue in valueGroup.values) // Loop through the inner Values1 array
+                    {
+                        if (innerValue.value > firstYearLargestValue.Value && innerValue.value != null)
+                        {
+                            firstYearLargestValue.Value = innerValue.value;
+                            firstYearLargestValue.year = firstYear;
+                            firstYearLargestValue.Id = region.Id;
+                            firstYearLargestValue.Name = regions.FirstOrDefault(n => n.Id == region.Id).Name;
+                        }
+                    }
+                }
+            }
+
+            if (secondYear != zeroAsString)
+            {
+                var result = await FetchWindPowerData(region.Id, secondYear);
+                foreach (var valueGroup in result.values) // Loop through the outer Values array
+                {
+                    foreach (var innerValue in valueGroup.values) // Loop through the inner Values1 array
+                    {
+                        if (innerValue.value > secondYearLargestValue.Value && innerValue.value != null)
+                        {
+                            secondYearLargestValue.Value = innerValue.value;
+                            secondYearLargestValue.year = secondYear;
+                            secondYearLargestValue.Id = region.Id;
+                            secondYearLargestValue.Name = regions.FirstOrDefault(n => n.Id == region.Id).Name;
+                        }
+                    }
+                }
+            }
+        }
+
+        _firstYearLargestValue = firstYearLargestValue;
+        _secondYearLargestValue = secondYearLargestValue;
+
+    }
+
+    private async Task<bool> CheckIfValid(string region, string year)
+    {
+        if (string.IsNullOrEmpty(region) || string.IsNullOrEmpty(year))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private async Task<WindPowerProductionDTO> FetchWindPowerData(string region, string year)
+    {
+        var result = await CheckIfValid(region, year);
+        if (!result)
+        {
+            return new();
+        }
+
+        try
+        {
+            return await ApiService.GetWindPowerProduction(region, year);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching data: {ex.Message}");
+            return new();
+        }
+    }
+
+    public class RegionWithValue
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string year { get; set; }
+        public double? Value { get; set; }
+    }
+}
