@@ -1,0 +1,85 @@
+@page "/AverageProduction"
+@using KraftKollen.Repository
+@using KraftKollen.Components.Components
+@rendermode InteractiveServer
+@inject IApiService ApiService
+<h3>AverageProduction</h3>
+<GetDataByRegionComponent OnRegionsSelected="UpdateRegion"></GetDataByRegionComponent>
+<GetTwoYearsComponent OnTwoYearsSelected="UpdateYears"></GetTwoYearsComponent>
+
+@if (averageProduction > 0)
+{
+    <p>
+        Medelvärde under åren  @selectedYears.Item1 och @selectedYears.Item2 är @averageProduction kWh
+
+    </p>
+}
+else
+{
+    <p>@erromessage</p>
+}
+
+@code {
+    private string selectedRegion;
+    private (int, int) selectedYears;
+    private double averageProduction; // för att beräkna medelvärde
+    private string erromessage = string.Empty;
+
+    private async Task CalculateAverageProduction()
+    {
+        if (string.IsNullOrEmpty(selectedRegion) || selectedYears == default)
+        {
+            averageProduction = 0;
+            return;
+        }
+
+        var years = new List<string> { selectedYears.Item1.ToString(), selectedYears.Item2.ToString() };
+        var productionValues = new List<double>();
+        try
+        {
+            foreach (var year in years)
+            {
+                var data = await ApiService.GetWindPowerProduction(selectedRegion, year.ToString());
+                if (data?.values != null)
+                {
+                    var YearsValue = data?.values.
+                        SelectMany(x => x.values)
+                        .Where(v => v.value.HasValue )
+                        .Average(v1 => v1.value);
+                    
+                    productionValues.Add(YearsValue.Value);
+                }
+            }
+
+            if (productionValues.Any())
+            {
+                averageProduction = productionValues.Average();
+                erromessage = string.Empty;
+            }
+            else
+            {
+                averageProduction = 0;  
+                erromessage = "ingen data för dessa år";   
+            }
+        }
+        catch (Exception e)
+        {
+            erromessage = "det gick ej att hämta data för dessa år";
+            averageProduction = 0;
+        }
+    }
+
+    private async Task UpdateRegion(string Region)
+    {
+        selectedRegion = Region;
+        await CalculateAverageProduction();
+    }
+
+    private async Task UpdateYears((int, int) years)
+    {
+        selectedYears = years;
+
+        await CalculateAverageProduction();
+    }
+
+}
