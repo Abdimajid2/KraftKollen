@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace KraftKollen.Models;
 
 public class AllRegions
