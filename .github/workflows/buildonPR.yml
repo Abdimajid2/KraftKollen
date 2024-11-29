@@ -21,4 +21,4 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: build-project
-      run: dotnet build
+      run: cd KraftKollen; dotnet build
