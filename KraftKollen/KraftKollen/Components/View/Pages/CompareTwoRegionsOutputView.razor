@@ -47,36 +47,24 @@
             if (firstYear != zeroAsString)
             {
                 var result = await FetchWindPowerData(region.Id, firstYear);
-                foreach (var valueGroup in result.values) // Loop through the outer Values array
+                if (result.Value > firstYearLargestValue.Value && result.Value != null)
                 {
-                    foreach (var innerValue in valueGroup.values) // Loop through the inner Values1 array
-                    {
-                        if (innerValue.value > firstYearLargestValue.Value && innerValue.value != null)
-                        {
-                            firstYearLargestValue.Value = innerValue.value;
-                            firstYearLargestValue.year = firstYear;
-                            firstYearLargestValue.Id = region.Id;
-                            firstYearLargestValue.Name = regions.FirstOrDefault(n => n.Id == region.Id).Name;
-                        }
-                    }
+                    firstYearLargestValue.Value = result.Value;
+                    firstYearLargestValue.year = firstYear;
+                    firstYearLargestValue.Id = region.Id;
+                    firstYearLargestValue.Name = regions.FirstOrDefault(n => n.Id == region.Id).Name;
                 }
             }
 
             if (secondYear != zeroAsString)
             {
                 var result = await FetchWindPowerData(region.Id, secondYear);
-                foreach (var valueGroup in result.values) // Loop through the outer Values array
+                if (result.Value > secondYearLargestValue.Value && result.Value != null)
                 {
-                    foreach (var innerValue in valueGroup.values) // Loop through the inner Values1 array
-                    {
-                        if (innerValue.value > secondYearLargestValue.Value && innerValue.value != null)
-                        {
-                            secondYearLargestValue.Value = innerValue.value;
-                            secondYearLargestValue.year = secondYear;
-                            secondYearLargestValue.Id = region.Id;
-                            secondYearLargestValue.Name = regions.FirstOrDefault(n => n.Id == region.Id).Name;
-                        }
-                    }
+                    secondYearLargestValue.Value = result.Value;
+                    secondYearLargestValue.year = secondYear;
+                    secondYearLargestValue.Id = region.Id;
+                    secondYearLargestValue.Name = regions.FirstOrDefault(n => n.Id == region.Id).Name;
                 }
             }
         }
@@ -96,7 +84,7 @@
         return true;
     }
 
-    private async Task<WindPowerProductionDTO> FetchWindPowerData(string region, string year)
+    private async Task<WindPowerProduction> FetchWindPowerData(string region, string year)
     {
         var result = await CheckIfValid(region, year);
         if (!result)

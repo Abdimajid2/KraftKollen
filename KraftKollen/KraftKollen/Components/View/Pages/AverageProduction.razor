@@ -10,7 +10,7 @@
 @if (averageProduction > 0)
 {
     <p>
-        Medelvärde under åren  @selectedYears.Item1 och @selectedYears.Item2 är @averageProduction kWh
+        Medelvärde under åren  @selectedYears.Item1 och @selectedYears.Item2 är @averageProduction MWh
 
     </p>
 }
@@ -40,15 +40,20 @@ else
             foreach (var year in years)
             {
                 var data = await ApiService.GetWindPowerProduction(selectedRegion, year.ToString());
-                if (data?.values != null)
+                if (data.Value != null)
                 {
-                    var YearsValue = data?.values.
-                        SelectMany(x => x.values)
-                        .Where(v => v.value.HasValue )
-                        .Average(v1 => v1.value);
-                    
-                    productionValues.Add(YearsValue.Value);
+                    productionValues.Add((double)data.Value);
                 }
+                // TODO
+                // if (data?.values != null)
+                // {
+                //     var YearsValue = data?.values.
+                //         SelectMany(x => x.values)
+                //         .Where(v => v.value.HasValue )
+                //         .Average(v1 => v1.value);
+                    
+                //     productionValues.Add(YearsValue.Value);
+                // }
             }
 
             if (productionValues.Any())

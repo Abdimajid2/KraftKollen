@@ -1,6 +1,7 @@
 ﻿@rendermode InteractiveServer
 
 @page "/"
+@using KraftKollen.Models
 @using KraftKollen.Repository
 @using KraftKollen.Repository.Models
 @using KraftKollen.Components.Components
@@ -8,25 +9,12 @@
 @inject IApiService ApiService 
 @if (test != null)
 {
+         <p>kommun id: @test.Municipality</p>
+         <p>år:  @test.Period</p>
+         <p>hur mycket el som producerats: @test.Value</p>
+    
 
-     @foreach (var value in test.values)
-     {
-         <p>@value.kpi</p>
-         <p>kommun id: @value.municipality</p>
-         <p>år:  @value.period</p>
-         if (value.values != null)
-         {
-             @foreach(var val in value.values)
-             {
-                 <p>@val.count</p>
-                 <p>@val.gender</p>
-                 <p>@val.status</p>
-                 <p>hur mycket el som producerats: @val.value</p>
-             }
-         }
-     }
-
-    @foreach (var value in test.values)
+    @* @foreach (var value in test.values)
     {
         <p>@value.kpi</p>
         <p>kommun id: @value.municipality</p>
@@ -51,7 +39,7 @@
 
             }
         }
-    }
+    } *@
 
 }
 <GetDataByYearComponent OnYearSelected="UpdateYear"></GetDataByYearComponent>
@@ -67,7 +55,7 @@
 {
     private string? region;
     private string? year;
-    private WindPowerProductionDTO test;
+    private WindPowerProduction test;
 
     // private async Task HandleSelectedRegions(List<string> selectedRegions)
     // {

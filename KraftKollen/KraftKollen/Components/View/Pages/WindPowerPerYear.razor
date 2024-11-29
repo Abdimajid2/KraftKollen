@@ -3,7 +3,7 @@
 @using KraftKollen.Models
 @using KraftKollen.Repository
 @using KraftKollen.Repository.Models
-@inject HttpClient _httpClient
+@inject IApiService apiService
 
 @page "/WindPowerPerYear"
 
@@ -33,8 +33,8 @@
     @if (totalProductionYearOne > 0 && totalProductionYearTwo > 0)
     {
         <h5 style="margin-top: 20px;">Total elproduktion från våra 21 regioners vindkraftverk. </h5>
-        <p>År: @selectedYearOne: @totalProductionYearOne Gwh (@(totalProductionYearOne * 1000) Mwh)</p>
-        <p>År: @selectedYearTwo: @totalProductionYearTwo Gwh (@(totalProductionYearTwo * 1000) Mwh).</p>
+    <p>År: @selectedYearOne: @totalProductionYearOne Mwh (@(CalculateResultInGigaWatt(totalProductionYearOne)) Gwh)</p>
+    <p>År: @selectedYearTwo: @totalProductionYearTwo Mwh (@(CalculateResultInGigaWatt(totalProductionYearTwo)) Gwh).</p>
         
     }  
 
@@ -77,18 +77,23 @@
                 // H�mta data för regionen och året
                 var production = await GetWindPowerProduction(region.Id, year.ToString());
 
-                if (production?.values != null)
+                if (production.Value != null)
                 {
-                    foreach (var value in production.values)
-                    {
-                        if (value.values != null)
-                        {
-                            total += value.values
-                                .Where(v => v.value.HasValue) // Kontrollera att värde finns
-                                .Sum(v => v.value.Value);  // Summera alla värden
-                        }
-                    }
+                    total += (double)production.Value;
                 }
+
+                // if (production?.values != null)
+                // {
+                //     foreach (var value in production.values)
+                //     {
+                //         if (value.values != null)
+                //         {
+                //             total += value.values
+                //                 .Where(v => v.value.HasValue) // Kontrollera att värde finns
+                //                 .Sum(v => v.value.Value);  // Summera alla värden
+                //         }
+                //     }
+                // }
             }
             catch (Exception ex)
             {
@@ -99,14 +104,14 @@
         return total;
     }
 
-    private void CalculateResultInGigaWatt()
+    private double CalculateResultInGigaWatt(double value)
     {
-        totalProductionYearOne /= 1000;
-        totalProductionYearTwo /= 1000;
+        return value / 1000;
     }
 
-    public async Task<WindPowerProductionDTO> GetWindPowerProduction(string regionId, string year)
-    {        
-        return await _httpClient.GetFromJsonAsync<WindPowerProductionDTO>($"http://api.kolada.se/v2/data/kpi/N45904/municipality/{regionId}/year/{year}");
+    public async Task<WindPowerProduction> GetWindPowerProduction(string regionId, string year)
+    {
+        var test = await apiService.GetWindPowerProduction(regionId, year);
+        return test;
     }
 }

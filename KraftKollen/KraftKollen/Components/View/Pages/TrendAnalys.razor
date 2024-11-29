@@ -1,8 +1,9 @@
 @rendermode InteractiveServer
 @page "/TrendAnalys"
 @using KraftKollen.Models
+@using KraftKollen.Repository
 @using KraftKollen.Repository.Models
-@inject HttpClient Http
+@inject IApiService apiService
 
 <h3>Trendanalys för Vindkraft</h3>
 
@@ -43,7 +44,7 @@
         <ul>
             @foreach (var value in trendData)
             {
-                <li>År: @value.period, Värde: @string.Join(", ", value.values.Select(v => v.value)) Kw/h</li>
+                <li>År: @value.Period, Värde: @string.Join(", ", value.Value) Mw/h</li>
 
 
 
@@ -63,7 +64,7 @@
     private int startYear = 2020;
     private int endYear = 2023;
     private bool loading = false;
-    private List<WindPowerProductionDTO.Values> trendData = new List<WindPowerProductionDTO.Values>();
+    private List<WindPowerProduction> trendData = new List<WindPowerProduction>();
     private string trendResult;
 
     private async Task LoadData()
@@ -76,16 +77,23 @@
             // Iterera över varje år i det valda intervallet
             for (int year = startYear; year <= endYear; year++)
             {
-                string apiUrl = $"http://api.kolada.se/v2/data/kpi/N45904/municipality/{selectedRegionId}/year/{year}";
-                
-                Console.WriteLine($"API URL: {apiUrl}");
+                var data = await apiService.GetWindPowerProduction(selectedRegionId, year.ToString());
 
-                var response = await Http.GetFromJsonAsync<WindPowerProductionDTO>(apiUrl);
-
-                if (response?.values != null)
+                if (data.Value != null)
                 {
-                    trendData.AddRange(response.values.Where(v => v.period == year));
+                    trendData.Add(data);
                 }
+
+                // string apiUrl = $"http://api.kolada.se/v2/data/kpi/N45904/municipality/{selectedRegionId}/year/{year}";
+
+                // Console.WriteLine($"API URL: {apiUrl}");
+
+                // var response = await Http.GetFromJsonAsync<WindPowerProductionDTO>(apiUrl);
+
+                // if (response?.values != null)
+                // {
+                //     trendData.AddRange(response.values.Where(v => v.period == year));
+                // }
             }
 
             // Kontrollera om vi fick någon data
@@ -109,16 +117,17 @@
     }
 
 
-    private string CalculateTrend(List<WindPowerProductionDTO.Values> data)
+    private string CalculateTrend(List<WindPowerProduction> data)
     {
         if (data.Count < 2)
         {
             return "Inte tillräckligt med data för att beräkna en trend.";
         }
 
-        var sortedData = data.OrderBy(d => d.period).ToList();
-        var firstValue = sortedData.First().values.Sum(v => v.value);
-        var lastValue = sortedData.Last().values.Sum(v => v.value);
+        var sortedData = data.OrderBy(d => d.Period).ToList();
+
+        var firstValue = sortedData.First().Value;
+        var lastValue = sortedData.Last().Value;
 
         if (lastValue > firstValue)
         {
