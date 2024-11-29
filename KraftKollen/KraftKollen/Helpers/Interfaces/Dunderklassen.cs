@@ -1,6 +1,6 @@
 ﻿namespace KraftKollen.Helpers.Interfaces
 {
-    public class TestingAgain
+    public class Dunderklassen
     {
     }
 }
