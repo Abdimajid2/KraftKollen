@@ -24,6 +24,7 @@ public class Program
         builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri ("http://api.kolada.se/")});
         builder.Services.AddScoped<IApiService, ApiService>();
         builder.Services.AddAutoMapper(typeof(MappingProfile));
+        builder.Services.AddScoped<CalculateProductionDifference>();
 
         var app = builder.Build();
 
