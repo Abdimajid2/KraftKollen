@@ -2,6 +2,7 @@ using System;
 using System.Net.Http;
 using KraftKollen.Components;
 using KraftKollen.Helpers;
+using KraftKollen.Helpers.Interfaces;
 using KraftKollen.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,10 +24,11 @@ public class Program
             .AddInteractiveServerComponents();
         builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri ("http://api.kolada.se/")});
         builder.Services.AddScoped<IApiService, ApiService>();
+        builder.Services.AddScoped<ITrendCalculator, TrendCalculator>();
         builder.Services.AddAutoMapper(typeof(MappingProfile));
 
         var app = builder.Build();
-
+        
         // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment())
         {
