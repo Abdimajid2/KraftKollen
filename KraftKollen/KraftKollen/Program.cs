@@ -26,6 +26,7 @@ public class Program
         builder.Services.AddScoped<IApiService, ApiService>();
         builder.Services.AddScoped<ITrendCalculator, TrendCalculator>();
         builder.Services.AddAutoMapper(typeof(MappingProfile));
+        builder.Services.AddScoped<CalculateProductionDifference>();
 
         var app = builder.Build();
         

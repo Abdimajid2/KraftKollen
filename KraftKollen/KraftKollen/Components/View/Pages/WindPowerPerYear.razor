@@ -4,6 +4,7 @@
 @using KraftKollen.Repository
 @using KraftKollen.Repository.Models
 @inject IApiService apiService
+@using KraftKollen.Helpers
 
 @page "/WindPowerPerYear"
 
@@ -33,23 +34,25 @@
     @if (totalProductionYearOne > 0 && totalProductionYearTwo > 0)
     {
         <h5 style="margin-top: 20px;">Total elproduktion från våra 21 regioners vindkraftverk. </h5>
-    <p>År: @selectedYearOne: @totalProductionYearOne Mwh (@(CalculateResultInGigaWatt(totalProductionYearOne)) Gwh)</p>
-    <p>År: @selectedYearTwo: @totalProductionYearTwo Mwh (@(CalculateResultInGigaWatt(totalProductionYearTwo)) Gwh).</p>
-        
+        <p>År: @selectedYearOne: @totalProductionYearOne Mwh (@(CalculateResultInGigaWatt(totalProductionYearOne)) Gwh)</p>
+        <p>År: @selectedYearTwo: @totalProductionYearTwo Mwh (@(CalculateResultInGigaWatt(totalProductionYearTwo)) Gwh).</p>
+        <p>Skillnad i produktion mellan åren: @productionDifference Mwh (@(CalculateResultInGigaWatt(productionDifference)) Gwh)</p>    
     }  
-
 
 @code {
 
-    private List<int> years = new List<int> { 2016, 2017, 2018, 2019, 2020, 2021, 2022 };
+    private List<int> years = new List<int> { 2019, 2020, 2021, 2022 };
 
     private int selectedYearOne;
     private int selectedYearTwo;
-
     private double totalProductionYearOne;
-    private double totalProductionYearTwo;
-
-    private async Task FetchTotalProduction()
+    private double totalProductionYearTwo;    
+    private double productionDifference; 
+    
+    [Inject]
+    private CalculateProductionDifference CalculateProductionDifference { get; set; } // Injectar den isolerade klassen med metoden som ska testas.
+       
+    private async Task FetchTotalProduction() // Hämtar total produktion från region och år
     {
         if (selectedYearOne == 0 || selectedYearTwo == 0)
         {
@@ -59,12 +62,15 @@
             return;
         }
 
-        // Visa om b�da �ren valts
+        // Visa om båda åren valts
         totalProductionYearOne = await CalculateTotalProductionForYear(selectedYearOne);
         totalProductionYearTwo = await CalculateTotalProductionForYear(selectedYearTwo);
+
+        // Beräknar skillnaden av produktion
+        productionDifference = CalculateProductionDifference.CalculateDifference(totalProductionYearOne, totalProductionYearTwo);
     }
 
-    //Beräkna totalproduktion per år
+    // Beräkna totalproduktion per år
     private async Task<double> CalculateTotalProductionForYear(int year)
     {
         double total = 0;
@@ -74,26 +80,13 @@
         {
             try
             {
-                // H�mta data för regionen och året
+                // Hämta data för regionen och året
                 var production = await GetWindPowerProduction(region.Id, year.ToString());
 
                 if (production.Value != null)
                 {
                     total += (double)production.Value;
-                }
-
-                // if (production?.values != null)
-                // {
-                //     foreach (var value in production.values)
-                //     {
-                //         if (value.values != null)
-                //         {
-                //             total += value.values
-                //                 .Where(v => v.value.HasValue) // Kontrollera att värde finns
-                //                 .Sum(v => v.value.Value);  // Summera alla värden
-                //         }
-                //     }
-                // }
+                }               
             }
             catch (Exception ex)
             {
@@ -104,14 +97,14 @@
         return total;
     }
 
-    private double CalculateResultInGigaWatt(double value)
+    private double CalculateResultInGigaWatt(double value) // Beräknar Mwh till Ghw
     {
         return value / 1000;
-    }
+    }    
 
     public async Task<WindPowerProduction> GetWindPowerProduction(string regionId, string year)
     {
-        var test = await apiService.GetWindPowerProduction(regionId, year);
-        return test;
+        var windpower = await apiService.GetWindPowerProduction(regionId, year);
+        return windpower;
     }
 }
