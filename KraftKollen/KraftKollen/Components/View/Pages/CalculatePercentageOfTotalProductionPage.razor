@@ -1,0 +1,60 @@
+@page "/CalculatePercentageOfTotalProductionPage"
+@rendermode InteractiveServer
+@using KraftKollen.Helpers
+@using KraftKollen.Components.Components
+@inject ICalculateProcentage calculateProcentage
+<h3>CalculatePercentageOfTotalProductionPage</h3>
+<GetDataByRegionComponent OnRegionsSelected="UpdateRegion"></GetDataByRegionComponent>
+<GetDataByYearComponent OnYearSelected="UpdateYears"></GetDataByYearComponent>
+
+@if (Percentage.HasValue)
+{
+    <p>
+        Vindkraften står för @(Percentage?.ToString("F1")) procent av den totala elproduktionen i @regionId under året @year
+    </p>
+}
+else
+{
+    <p>@errormessage</p>
+}
+@code {
+    private string regionId;
+    private string year;
+    private double? Percentage;
+    private string errormessage;
+    
+    private async Task UpdateRegion(string Region)
+    {
+        regionId = Region;
+        await CalculatePercentage();
+    }
+
+    private async Task UpdateYears( string years)
+    {
+        year = years;
+        await CalculatePercentage();
+    }
+
+    private async Task CalculatePercentage()
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(regionId) || string.IsNullOrEmpty(year))
+            {
+                errormessage = "Region och år måste väljas.";
+                Percentage = null;
+                return;
+            }
+
+            Percentage = await calculateProcentage.CalculateProcentageOfTotalProduction(regionId, year);
+            var test = 45;
+            errormessage = string.Empty;
+        }
+        catch (Exception e)
+        {
+            errormessage = $"Ett fel uppstod: {e.Message}";
+            Percentage = null;
+        }
+    }
+    
+}
