@@ -23,6 +23,7 @@ public class Program
             .AddInteractiveServerComponents();
         builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri ("http://api.kolada.se/")});
         builder.Services.AddScoped<IApiService, ApiService>();
+        builder.Services.AddScoped<ICalculateProcentage, CalculateProcentage>();
         builder.Services.AddAutoMapper(typeof(MappingProfile));
 
         var app = builder.Build();
