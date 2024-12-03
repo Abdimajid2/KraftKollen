@@ -3,7 +3,7 @@ using KraftKollen.Components;
 using KraftKollen.Components.Components;
 using KraftKollen.Models;
 using Microsoft.AspNetCore.Components;
-
+using KraftKollen.Repository;
 namespace KraftKollen.Tests;
 
 public class test : TestContext
@@ -32,4 +32,16 @@ public class test : TestContext
         Assert.Equal(regions.Count, selectedRegionIds.Count);
        
     }
+
+
+    // [Fact]
+    // public async void CalculateProcentageOfTotalProduction()
+    // {
+    //     // Arrange
+    //     var mockaapiservice = new Mock
+    //
+    //     // Act
+    //
+    //     // Assert
+    // }
 }

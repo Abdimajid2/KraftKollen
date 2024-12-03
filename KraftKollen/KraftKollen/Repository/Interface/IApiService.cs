@@ -7,6 +7,6 @@ namespace KraftKollen.Repository;
 public interface IApiService
 {
     Task<WindPowerProduction> GetWindPowerProduction(string municipality, string year);
-   
-    
+    Task<WindPowerProduction> GetTotalPowerProduction(string municipality, string year);
+
 }

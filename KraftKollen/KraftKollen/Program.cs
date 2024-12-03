@@ -24,6 +24,7 @@ public class Program
             .AddInteractiveServerComponents();
         builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri ("http://api.kolada.se/")});
         builder.Services.AddScoped<IApiService, ApiService>();
+        builder.Services.AddScoped<ICalculateProcentage, CalculateProcentage>();
         builder.Services.AddScoped<ITrendCalculator, TrendCalculator>();
         builder.Services.AddAutoMapper(typeof(MappingProfile));
         builder.Services.AddScoped<CalculateProductionDifference>();

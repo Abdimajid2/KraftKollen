@@ -33,9 +33,17 @@ public class ApiService : IApiService
   
     }
 
-    public async Task<WindPowerProductionDTO> GetTotalPowerProduction(string municipality, string year)
+    public async Task<WindPowerProduction> GetTotalPowerProduction(string municipality, string year)
     {
-        return await _httpClient.GetFromJsonAsync<WindPowerProductionDTO>($"http://api.kolada.se/v2/data/kpi/N45904/municipality/{municipality}/year/{year}");
+        var data = await _httpClient.GetFromJsonAsync<WindPowerProductionDTO>($"http://api.kolada.se/v2/data/kpi/N45926/municipality/{municipality}/year/{year}");
+
+        if (data == null)
+        {
+            throw new Exception("The API returned null. Check the endpoint or request parameters.");
+        }
+
+        var result = _mapper.Map<WindPowerProduction>(data);
+        return result;
 
     }
     
