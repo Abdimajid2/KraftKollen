@@ -34,11 +34,7 @@
 </div>
 
 <div>
-    @if (loading)
-    {
-        <p>Laddar...</p>
-    }
-    else if (trendData != null)
+    @if (trendData != null)
     {
         <h4>Trend: @(trendResult)</h4>
         <ul>
@@ -63,18 +59,16 @@
     private List<int> availableYears = Enumerable.Range(2000, DateTime.Now.Year - 1999).ToList();
     private int startYear = 2020;
     private int endYear = 2023;
-    private bool loading = false;
     private List<WindPowerProduction> trendData = new List<WindPowerProduction>();
     private string trendResult;
 
     private async Task LoadData()
     {
-        loading = true;
         trendData.Clear();
 
         try
         {
-            // Iterera över varje år i det valda intervallet
+
             for (int year = startYear; year <= endYear; year++)
             {
                 var data = await apiService.GetWindPowerProduction(selectedRegionId, year.ToString());
@@ -84,16 +78,6 @@
                     trendData.Add(data);
                 }
 
-                // string apiUrl = $"http://api.kolada.se/v2/data/kpi/N45904/municipality/{selectedRegionId}/year/{year}";
-
-                // Console.WriteLine($"API URL: {apiUrl}");
-
-                // var response = await Http.GetFromJsonAsync<WindPowerProductionDTO>(apiUrl);
-
-                // if (response?.values != null)
-                // {
-                //     trendData.AddRange(response.values.Where(v => v.period == year));
-                // }
             }
 
             // Kontrollera om vi fick någon data
@@ -110,11 +94,6 @@
         {
             trendResult = $"Fel: {ex.Message}";
         }
-        finally
-        {
-            loading = false;
-        }
-    }
 
 
     private string CalculateTrend(List<WindPowerProduction> data)
