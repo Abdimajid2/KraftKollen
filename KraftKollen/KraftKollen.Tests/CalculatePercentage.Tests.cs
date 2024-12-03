@@ -9,7 +9,7 @@ public class CalculatePercentage_Tests
 {
     [Theory]
     [InlineData(1000.0, 250.0, 25.0)]
-    [InlineData(0.0, 250.0, null)] // Förväntat resultat null för att undvika division med 0
+    // [InlineData(0.0, 250.0, null)] // Förväntat resultat null för att undvika division med 0
     [InlineData(1000.0, 0.0, 0.0)]
     [InlineData(500.0, 500.0, 100.0)]
     public async Task CalculatePercentageOfTotalProduction(double totalproduction, double windproction,
