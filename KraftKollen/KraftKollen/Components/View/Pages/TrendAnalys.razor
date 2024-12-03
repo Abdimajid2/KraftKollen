@@ -24,7 +24,7 @@
         }
     </select>
     <select id="endYear" @bind="endYear">
-        @foreach (var year in availableYears)
+        @foreach (var year in availableYears.Where(year => year >= startYear))
         {
             <option value="@year">@year</option>
         }
@@ -41,8 +41,6 @@
             @foreach (var value in trendData)
             {
                 <li>År: @value.Period, Värde: @string.Join(", ", value.Value) Mw/h</li>
-
-
 
             }
         </ul>
@@ -66,6 +64,11 @@
     {
         trendData.Clear();
 
+        if(startYear == endYear)
+        {
+            trendResult = "Startår och slutår kan inte vara samma, går inte att räkna ut trend.";
+            return;
+        }
         try
         {
 
