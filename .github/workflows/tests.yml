@@ -20,7 +20,7 @@ jobs:
             dotnet-version: '8.0' # Specify the version you're using, adjust as necessary
           
       -  name: Restore dependencies
-         run: dotnet restore
+         run: cd KraftKollen; dotnet restore
             
       -  name: Run tests
          run: cd KraftKollen; dotnet test --project KraftKollen.Tests/KraftKollen.Tests.csproj --no-restore --verbosity normal
