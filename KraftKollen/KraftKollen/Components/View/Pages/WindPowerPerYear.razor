@@ -3,8 +3,10 @@
 @using KraftKollen.Models
 @using KraftKollen.Repository
 @using KraftKollen.Repository.Models
+@using KraftKollen.Helpers.Interfaces
 @inject IApiService apiService
-@using KraftKollen.Helpers
+
+
 
 @page "/WindPowerPerYear"
 
@@ -50,7 +52,7 @@
     private double productionDifference; 
     
     [Inject]
-    private CalculateProductionDifference CalculateProductionDifference { get; set; } // Injectar den isolerade klassen med metoden som ska testas.
+    private ICalculateProductionDifference CalculateProductionDifference { get; set; } //Behöver ett interface för att fungera  av  den isolerade klassen med metoden som ska testas.
        
     private async Task FetchTotalProduction() // Hämtar total produktion från region och år
     {
