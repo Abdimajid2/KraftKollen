@@ -68,7 +68,7 @@
 
         if(startYear == endYear)
         {
-            trendResult = "Startår och slutår kan inte vara samma, går inte att räkna ut trend.";
+            trendResult = "Startyear and endyear can not be the same, impossible to calculate trend.";
             return;
         }
         try
@@ -92,12 +92,12 @@
             }
             else
             {
-                trendResult = "Ingen data hittades för valt intervall.";
+                trendResult = "No data found.";
             }
         }
         catch (Exception ex)
         {
-            trendResult = $"Fel: {ex.Message}";
+            trendResult = $"Error: {ex.Message}";
         }
 
     }
