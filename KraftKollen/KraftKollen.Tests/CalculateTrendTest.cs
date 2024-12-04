@@ -2,10 +2,7 @@ using KraftKollen.Helpers;
 using KraftKollen.Models;
 using Xunit;
 using System.Collections.Generic;
-using System.Globalization;
 
-CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("sv-SE");
-CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("sv-SE");
 
 namespace KraftKollen.Tests
 {
