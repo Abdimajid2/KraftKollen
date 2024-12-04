@@ -2,7 +2,7 @@ name: PR Test Failure Reporter
 
 on:
   workflow_dispatch:
-    pull_request:
+  pull_request:
       branches:
         - main
 
