@@ -66,7 +66,7 @@ namespace KraftKollen.Tests
             var result = _fixture.TrendCalculator.CalculateTrend(_fixture.UnchangedTrendData);
 
             // Assert
-            Assert.Equal("Trend is unchangedithinkso.", result);
+            Assert.Equal("Trend is unchanged.", result);
         }
     }
 }
