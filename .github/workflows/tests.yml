@@ -18,6 +18,22 @@ jobs:
             
       -  name: Restore dependencies
          run: cd KraftKollen; dotnet restore
+
+      - name: Install and configure locale
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y locales
+          sudo locale-gen sv_SE.UTF-8
+          echo "LANG=sv_SE.UTF-8" | sudo tee /etc/default/locale
+          export LANG=sv_SE.UTF-8
+          export LC_ALL=sv_SE.UTF-8
+          locale
+          
+      - name: Generate Swedish locale
+        run: |
+          sudo locale-gen sv_SE.UTF-8
+          sudo update-locale LANG=sv_SE.UTF-8 LC_ALL=sv_SE.UTF-8
+          locale
             
       -  name: Run tests
          env:
