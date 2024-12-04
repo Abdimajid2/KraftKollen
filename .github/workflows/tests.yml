@@ -1,0 +1,25 @@
+name: Run KraftKollen.Tests on Pull Request
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      -  name: Checkout code
+         uses: actions/checkout@v4
+          
+      -  name: Setup .NET
+         uses: actions/setup-dotnet@v4
+         with:
+            dotnet-version: '8.0' # Specify the version you're using, adjust as necessary
+            
+      -  name: Restore dependencies
+         run: cd KraftKollen; dotnet restore
+            
+      -  name: Run tests
+         run: cd KraftKollen; dotnet test KraftKollen.Tests/KraftKollen.Tests.csproj --no-restore --verbosity normal
+
+
