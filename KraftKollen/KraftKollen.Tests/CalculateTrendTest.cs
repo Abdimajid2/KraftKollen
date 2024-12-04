@@ -2,6 +2,8 @@ using KraftKollen.Helpers;
 using KraftKollen.Models;
 using Xunit;
 using System.Collections.Generic;
+using Xunit.Abstractions;
+using System.Globalization;
 
 
 namespace KraftKollen.Tests
@@ -9,11 +11,14 @@ namespace KraftKollen.Tests
     public class TrendCalculatorTests : IClassFixture<TrendCalculatorFixture>
     {
         private readonly TrendCalculatorFixture _fixture;
+        private readonly ITestOutputHelper _output;
 
-        public TrendCalculatorTests(TrendCalculatorFixture fixture)
+        public TrendCalculatorTests(TrendCalculatorFixture fixture, ITestOutputHelper output)
         {
+
             // Arrange 
             _fixture = fixture;
+            this._output = output;
         }
 
         [Fact]
@@ -23,6 +28,7 @@ namespace KraftKollen.Tests
             // Act
             var result = _fixture.TrendCalculator.CalculateTrend(_fixture.InsufficientTrendData);
 
+           _output.WriteLine(CultureInfo.DefaultThreadCurrentCulture.DisplayName);
             // Assert
             Assert.Equal("Inte tillräckligt med data för att beräkna en trend.", result);
         }
