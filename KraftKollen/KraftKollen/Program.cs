@@ -28,7 +28,7 @@ public class Program
         builder.Services.AddScoped<ICalculateProcentage, CalculateProcentage>();
         builder.Services.AddScoped<ITrendCalculator, TrendCalculator>();
         builder.Services.AddAutoMapper(typeof(MappingProfile));
-        builder.Services.AddScoped<CalculateProductionDifference>();
+        builder.Services.AddScoped<ICalculateProductionDifference, CalculateProductionDifference>();
 
         var app = builder.Build();
         

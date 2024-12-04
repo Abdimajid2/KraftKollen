@@ -5,61 +5,67 @@ using System.Text;
 using System.Threading.Tasks;
 using KraftKollen.Helpers;
 using KraftKollen;
-
+using KraftKollen.Helpers.Interfaces;
 
 namespace KraftKollen.Tests
 {
     public class CalculateProductionDifferencePerYear
     {
-        [Fact]
-        public void CalculateProductionFor2019And2020ReturnsCorrectDifference()  // Åren 2010 och 2020
+        public class CalculateProductionDifferencePerTwoYear : IClassFixture<CalculateProductionDifferenceFixture>
         {
-            // Arrange
-            double production2019 = 19234852; // Produktionsvärde år 2019
-            double production2020 = 26306655; // Produktionsvärde år 2020
-            double expectedDifference = production2020 - production2019; // Förväntad skillnad mellan åren
+            private readonly ICalculateProductionDifference _calculator;
+            private readonly double _production2019;
+            private readonly double _production2020;
+            private readonly double _production2021;
+            private readonly double _production2022;
 
-            var calculator = new CalculateProductionDifference(); // Ny beräkning från isolerad klass som ska testas
+            public CalculateProductionDifferencePerTwoYear(CalculateProductionDifferenceFixture fixture)
+            {
+                _calculator = fixture.Calculator;
+                _production2019 = fixture.Production2019;
+                _production2020 = fixture.Production2020;
+                _production2021 = fixture.Production2021;
+                _production2022 = fixture.Production2022;               
+            }
 
-            // Act
-            double actualDifference = calculator.CalculateDifference(production2019, production2020); // Anropar metoden i den isolerade klassen  
+            [Fact]
+            public void CalculateProductionFor2019And2020ReturnsCorrectDifference()
+            {
+                // Arrange
+                double expectedDifference = _production2020 - _production2019;
 
-            // Assert
-            Assert.Equal(expectedDifference, actualDifference); // Kontrollera faktiska resultatet
-        }
+                // Act
+                double actualDifference = _calculator.CalculateDifference(_production2019, _production2020);
 
-        [Fact]
-        public void CalculateProductionFor2020And2021ReturnsCorrectDifference() // Åren 2020 och 2021
-        {
-            // Arrange
-            double production2020 = 26306655; 
-            double production2021 = 26520886; 
-            double expectedDifference = production2021 - production2020;
+                // Assert
+                Assert.Equal(expectedDifference, actualDifference);
+            }
 
-            var calculator = new CalculateProductionDifference();
+            [Fact]
+            public void CalculateProductionFor2020And2021ReturnsCorrectDifference()
+            {
+                // Arrange
+                double expectedDifference = _production2021 - _production2020;
 
-            // Act
-            double actualDifference = calculator.CalculateDifference(production2020, production2021);
+                // Act
+                double actualDifference = _calculator.CalculateDifference(_production2020, _production2021);
 
-            // Assert
-            Assert.Equal(expectedDifference, actualDifference);
-        }
+                // Assert
+                Assert.Equal(expectedDifference, actualDifference);
+            }
 
-        [Fact]
-        public void CalculateProductionFor2021And2022ReturnsCorrectDifference() // Åren 2021 och 2022
-        {
-            // Arrange
-            double production2021 = 26520886; 
-            double production2022 = 32483482; 
-            double expectedDifference = production2022 - production2021;
+            [Fact]
+            public void CalculateProductionFor2021And2022ReturnsCorrectDifference()
+            {
+                // Arrange
+                double expectedDifference = _production2022 - _production2021;
 
-            var calculator = new CalculateProductionDifference();
+                // Act
+                double actualDifference = _calculator.CalculateDifference(_production2021, _production2022);
 
-            // Act
-            double actualDifference = calculator.CalculateDifference(production2021, production2022);
-
-            // Assert
-            Assert.Equal(expectedDifference, actualDifference);
+                // Assert
+                Assert.Equal(expectedDifference, actualDifference);
+            }
         }
     }
 }
