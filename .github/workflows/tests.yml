@@ -19,21 +19,10 @@ jobs:
          with:
             dotnet-version: '8.0' # Specify the version you're using, adjust as necessary
             
-      - name: Configure Swedish locale
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y locales
-          sudo locale-gen sv_SE.UTF-8
-          echo "LANG=sv_SE.UTF-8" | sudo tee /etc/default/locale
-          export LANG=sv_SE.UTF-8
-          export LC_ALL=sv_SE.UTF-8
-          locale
-          
       -  name: Restore dependencies
          run: cd KraftKollen; dotnet restore
             
       -  name: Run tests
          run: cd KraftKollen; dotnet test KraftKollen.Tests/KraftKollen.Tests.csproj --no-restore --verbosity normal
-         env:
-           DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: false
+
 
