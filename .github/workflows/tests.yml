@@ -23,4 +23,5 @@ jobs:
          run: cd KraftKollen; dotnet restore
             
       -  name: Run tests
-         run: dotnet test --project KraftKollen.Tests/KraftKollen.Tests.csproj --no-restore --verbosity normal
+         run: dotnet test KraftKollen.Tests/KraftKollen.Tests.csproj --no-restore --verbosity normal
+
