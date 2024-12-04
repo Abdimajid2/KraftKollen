@@ -10,7 +10,7 @@ namespace KraftKollen.Helpers
         {
             if (data.Count < 2)
             {
-                return "Inte tillräckligt med data för att beräkna en trend.";
+                return "Not enough data to calculate a trend.";
             }
 
             
@@ -22,15 +22,15 @@ namespace KraftKollen.Helpers
 
             if (lastValue > firstValue)
             {
-                return "Trenden går uppåt.";
+                return "Trend goes up.";
             }
             else if (lastValue < firstValue)
             {
-                return "Trenden går nedåt.";
+                return "Trend goes down.";
             }
             else
             {
-                return "Trenden är oförändrad.";
+                return "Trend is unchanged.";
             }
         }
     }

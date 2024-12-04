@@ -15,8 +15,8 @@ namespace KraftKollen.Helpers
 
         public TrendCalculatorFixture()
         {
-            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
-            CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
+            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("sv-SE");
+            CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("sv-SE");
 
             TrendCalculator = new TrendCalculator();
             IncreasingTrendData = new List<WindPowerProduction>
