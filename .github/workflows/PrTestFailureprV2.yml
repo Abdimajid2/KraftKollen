@@ -56,43 +56,59 @@ jobs:
         if: failure()
         id: extract-failures
         run: |
+          echo "Extracting test failures..."
           if [ -f test_results/results.xml ]; then
-            echo "Extracting test failures..."
             grep -oP '<failure message=.*?>.*?</failure>' test_results/results.xml > test_results/failures_summary.txt || echo "No failures found"
           else
             echo "Results file not found."
           fi
-      
-      # Format för kommentar om testfel
-      - name: Format Test Failures for Comment
-        if: failure()
+
+      # Kontrollera om vi har extraherat några fel
+      - name: Check if failures were extracted
         run: |
           if [ -f test_results/failures_summary.txt ]; then
-            echo "### ❌ Test Failures Summary" > comment.md
-            echo "#### Below are the failed tests:" >> comment.md
-            while read -r line; do
-              message=$(echo "$line" | sed -E 's/<failure message="(.*?)">.*/\1/')
-              echo "- $message" >> comment.md
-            done < test_results/failures_summary.txt
-            echo "For full details, check the [workflow logs](${{ github.run_url }})." >> comment.md
+            echo "Test failures extracted successfully."
+            cat test_results/failures_summary.txt
           else
-            echo "No test failures to report."
+            echo "No test failures found."
           fi
 
-      # Sätt kommentarens innehåll som en miljövariabel
+      # Format för kommentar om testfel
+      - name: Format Test Failures for Comment
+        if: failure() && fileExists('test_results/failures_summary.txt')
+        run: |
+          echo "### ❌ Test Failures Summary" > comment.md
+          echo "#### Below are the failed tests:" >> comment.md
+          while read -r line; do
+            message=$(echo "$line" | sed -E 's/<failure message="(.*?)">.*/\1/')
+            echo "- $message" >> comment.md
+          done < test_results/failures_summary.txt
+          echo "For full details, check the [workflow logs](${{ github.run_url }})." >> comment.md
+
+      # Sätt kommentarens innehåll som en miljövariabel (endast om kommentar.md finns)
       - name: Set Comment Content as Environment Variable
-        if: failure()
+        if: failure() && fileExists('comment.md')
         run: |
           comment=$(cat comment.md)
           echo "comment<<EOF" >> $GITHUB_ENV
           echo "$comment" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
-      # Kommentera på PR
+      # Kommentera på PR (endast om kommentar.md har skapats)
       - name: comment-on-pr
-        if: failure()
+        if: failure() && fileExists('comment.md')
         uses: thollander/actions-comment-pull-request@v1
         with:
               message: "${{ env.comment }}"
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Kontrollera om en fil finns
+      - name: fileExists
+        run: |
+          if [ -f "comment.md" ]; then
+            echo "File comment.md exists."
+          else
+            echo "File comment.md does not exist."
+          fi
+
 
