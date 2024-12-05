@@ -21,23 +21,30 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0'
-          
-      # Step to restore dependencies (important if not done already)
+
+      # Step to restore dependencies
       - name: Restore dependencies
         run: |
           dotnet restore KraftKollen/KraftKollen.Tests/KraftKollen.Tests.csproj
 
-      # Debug: Check if the path exists and list files in the directory
+      # Debug: List files in the directory to ensure everything is set up
       - name: List files in the directory
         run: |
           ls -R KraftKollen/KraftKollen.Tests/
 
-      # Run Tests and Generate xUnit Results with more detailed output
+      # Run Tests and Generate xUnit Results with detailed output
       - name: Run Tests and Generate xUnit Results
         id: run-tests
         run: |
           mkdir -p test_results
           dotnet test KraftKollen/KraftKollen.Tests/KraftKollen.Tests.csproj --logger "xunit;LogFileName=test_results/results.xml" --verbosity detailed
+
+      # Upload test logs
+      - name: Upload Test Logs
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-logs
+          path: test_results/results.xml
 
       # Extract test failures (only if tests fail)
       - name: Extract Test Failures
@@ -67,6 +74,7 @@ jobs:
           echo "$comment" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
+      # Comment on the pull request if tests fail
       - name: comment-on-pr
         if: failure()
         uses: thollander/actions-comment-pull-request@v1
