@@ -51,7 +51,7 @@ jobs:
       - name: View Contents of test_log.txt
         run: |
           echo "Displaying contents of test_log.txt:"
-          cat test_results/test_log.txt  # Replace with the actual path to your txt file in the artifact
+          cat test_log.txt  # Replace with the actual path to your txt file in the artifact
 
     
       - name: Extract Test Failures
