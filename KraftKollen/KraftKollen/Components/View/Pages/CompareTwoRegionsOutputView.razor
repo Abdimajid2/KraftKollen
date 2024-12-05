@@ -11,7 +11,7 @@
 
 <h3>CompareTwoRegionsOutputView</h3>
 
-<GetTwoYearsComponent OnTwoYearsSelected="GetYears" />
+<GetTwoYearsComponent OnTwoYearsSelected="GetYearsAsync" />
 
 <div class="container">
     @if (_firstYearLargestValue != null)
@@ -60,29 +60,29 @@
     private RegionWithValue _firstYearLargestValue;
     private RegionWithValue _secondYearLargestValue;
 
-    private async Task GetYears((int, int) selectedTwoYears)
+    private async Task GetYearsAsync((int, int) selectedTwoYears)
     {
         var firstYear = selectedTwoYears.Item1.ToString();
         var secondYear = selectedTwoYears.Item2.ToString();
 
 
-        _firstYearLargestValue = await GetLargestValue(firstYear);
-        _secondYearLargestValue = await GetLargestValue(secondYear);
+        _firstYearLargestValue = await GetLargestValueAsync(firstYear);
+        _secondYearLargestValue = await GetLargestValueAsync(secondYear);
     }
 
-    private async Task<RegionWithValue> GetLargestValue(string year)
+    private async Task<RegionWithValue> GetLargestValueAsync(string year)
     {
         RegionWithValue currentLargestValue = new() { Year = year, Value = 0 };
 
         foreach (var region in regions)
         {
-            currentLargestValue = await UpdateLargestWindPowerValue(currentLargestValue, region.Id);
+            currentLargestValue = await TryUpdateLargestValueAsync(currentLargestValue, region.Id);
         }
 
         return currentLargestValue;
     }
 
-    private async Task<RegionWithValue> UpdateLargestWindPowerValue(RegionWithValue regionWithLargestValue, string id)
+    private async Task<RegionWithValue> TryUpdateLargestValueAsync(RegionWithValue regionWithLargestValue, string id)
     {
         var zeroAsString = "0";
         var year = regionWithLargestValue.Year;
@@ -92,7 +92,7 @@
 
         if (regionWithLargestValue.Year != zeroAsString)
         {
-            var result = await FetchWindPowerData(id, year);
+            var result = await FetchWindPowerDataAsync(id, year);
             if (result.Value > previousValue && result.Value != null)
             {
                 updatedRegion = new()
@@ -116,7 +116,7 @@
 
     }
 
-    private bool CheckIfValid(string region, string year)
+    private bool IsValidInput(string region, string year)
     {
         if (string.IsNullOrEmpty(region) || string.IsNullOrEmpty(year))
         {
@@ -126,9 +126,9 @@
         return true;
     }
 
-    private async Task<WindPowerProduction> FetchWindPowerData(string region, string year)
+    private async Task<WindPowerProduction> FetchWindPowerDataAsync(string region, string year)
     {
-        var result = CheckIfValid(region, year);
+        var result = IsValidInput(region, year);
         if (!result)
         {
             return new();
