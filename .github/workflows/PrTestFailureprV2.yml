@@ -67,10 +67,15 @@ jobs:
           formatted_comment="### ❌ Test Failures Summary\n"
 
           # Extract failures and format them into a more readable format
+          grep -P '^\[xUnit.net.*FAIL\]' test_log.txt || echo "No failures found" # Debugging line
+
+          # Extract failures and format them into a more readable format
           grep -P '^\[xUnit.net.*FAIL\]' test_log.txt | while read -r line; do
+            echo "Matched line: $line"  # Debugging line
             # Extract the test name
             test_name=$(echo "$line" | sed -E 's/\[xUnit.net.*\]     (.*) \[FAIL\]/\1/')
-            
+            echo "Test name: $test_name"  # Debugging line
+
             # Extract the error message and expected/actual values
             error_message=$(grep -A 3 "$test_name" test_log.txt | grep "Error Message" | sed -E 's/Error Message: (.*)/\1/')
             expected=$(grep -A 3 "$test_name" test_log.txt | grep "Expected" | sed -E 's/Expected: (.*)/\1/')
