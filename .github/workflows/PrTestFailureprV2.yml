@@ -43,9 +43,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Ensure comment.md exists
+        run: |
+          ls -l # List files to ensure the comment.md file exists
+
       - name: Read Comment Content
         id: read-comment
         run: |
+          cat comment.md  # Read the file content
           comment=$(cat comment.md)
           echo "comment=$comment" >> $GITHUB_ENV
 
