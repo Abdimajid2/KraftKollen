@@ -22,58 +22,28 @@ jobs:
         with:
           dotnet-version: '8.0'
           
-      # Återställ beroenden
+      # Step to restore dependencies (important if not done already)
       - name: Restore dependencies
         run: |
           dotnet restore KraftKollen/KraftKollen.Tests/KraftKollen.Tests.csproj
-
-      # Debug: Lista filer i katalogen för att verifiera existens
+      # Debug: Check if the path exists and list files in the directory
       - name: List files in the directory
         run: |
           ls -R KraftKollen/KraftKollen.Tests/
-
-      # Kör tester och generera xUnit resultat
+      # Run Tests and Generate xUnit Results with more detailed output
       - name: Run Tests and Generate xUnit Results
         id: run-tests
         run: |
           mkdir -p test_results
           dotnet test KraftKollen/KraftKollen.Tests/KraftKollen.Tests.csproj --logger "xunit;LogFileName=test_results/results.xml" --verbosity detailed
-          # Kontrollera om results.xml skapades
-          ls -lh test_results/results.xml
-
-      # Kontrollera storleken på testresultatfilen
-      - name: Check test result file size
-        run: |
-          ls -lh test_results/results.xml
-          if [ ! -s test_results/results.xml ]; then
-            echo "Test result file is empty or does not exist!" && exit 1
-          else
-            echo "Test result file is valid and not empty."
-          fi
-
-      # Extrahera testfel (om det finns några)
+      # Extract test failures (only if tests fail)
       - name: Extract Test Failures
         if: failure()
         id: extract-failures
         run: |
-          echo "Extracting test failures..."
-          if [ -f test_results/results.xml ]; then
-            grep -oP '<failure message=.*?>.*?</failure>' test_results/results.xml > test_results/failures_summary.txt || echo "No failures found"
-          else
-            echo "Results file not found."
-          fi
-
-      # Kontrollera om vi har extraherat några fel
-      - name: Check if failures were extracted
-        run: |
-          if [ -f test_results/failures_summary.txt ]; then
-            echo "Test failures extracted successfully."
-            cat test_results/failures_summary.txt
-          else
-            echo "No test failures found."
-          fi
-
-      # Format för kommentar om testfel
+          grep -oP '<failure message=.*?>.*?</failure>' test_results/results.xml > test_results/failures_summary.txt || echo "No failures found"
+      
+      # Format the comment if tests fail
       - name: Format Test Failures for Comment
         if: failure()
         run: |
@@ -84,22 +54,17 @@ jobs:
             echo "- $message" >> comment.md
           done < test_results/failures_summary.txt
           echo "For full details, check the [workflow logs](${{ github.run_url }})." >> comment.md
-
-      # Sätt kommentarens innehåll som en miljövariabel (endast om kommentar.md finns)
+      # Set the comment content as an environment variable
       - name: Set Comment Content as Environment Variable
-        if: failure() && test -f comment.md
+        if: failure()
         run: |
           comment=$(cat comment.md)
           echo "comment<<EOF" >> $GITHUB_ENV
           echo "$comment" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
-
-      # Kommentera på PR (endast om kommentar.md har skapats)
       - name: comment-on-pr
-        if: failure() && test -f comment.md
+        if: failure()
         uses: thollander/actions-comment-pull-request@v1
         with:
               message: "${{ env.comment }}"
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
