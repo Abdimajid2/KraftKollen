@@ -48,6 +48,11 @@ jobs:
           echo "Listing contents of the current directory:"
           ls -alh  # List contents of the current directory to see if test_results is there
 
+      - name: View Contents of test_log.txt
+        run: |
+          echo "Displaying contents of test_log.txt:"
+          cat test_results/test_log.txt  # Replace with the actual path to your txt file in the artifact
+
     
       - name: Extract Test Failures
         id: extract-failures
