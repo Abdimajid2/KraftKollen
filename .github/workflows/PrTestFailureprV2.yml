@@ -9,11 +9,10 @@ on:
 permissions:
   pull-requests: write
 
-
 jobs:
   test-and-report:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -27,19 +26,16 @@ jobs:
         id: run-tests
         run: |
           mkdir -p test_results
-          dotnet test KraftKollen/KraftKollen.Tests/KraftKollen.Tests.csproj --logger "xunit;LogFileName=test_results/results.xml" 
+          dotnet test KraftKollen/KraftKollen.Tests/KraftKollen.Tests.csproj --logger "xunit;LogFileName=test_results/results.xml"
 
       - name: Extract Test Failures
-        if: failure()
         id: extract-failures
         run: |
           grep -oP '<failure message=.*?>.*?</failure>' test_results/results.xml > test_results/failures_summary.txt || echo "No failures found"
 
       - name: Format Test Failures for Comment
-        if: failure()
         run: |
           echo "this is a test" > comment.md
-
 
       - name: Read Comment Content
         id: read-comment
@@ -47,14 +43,21 @@ jobs:
           echo "comment=$(cat comment.md)"
           echo "comment=$comment" >> $GITHUB_ENV
 
-
       - name: Debug Comment Content
         run: cat comment.md
 
-          
       - name: Comment on Pull Request
-        if: failure()
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: "${{ env.comment }}"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # This job runs only if Job 1 fails (for failure handling)
+  failure-handling:
+    runs-on: ubuntu-latest
+    needs: test-and-report
+    if: failure()  # Only run this job if Job 1 (test-and-report) fails
+
+    steps:
+      - name: Handle Failure (Optional)
+        run: echo "Job 1 failed, executing failure handling logic"
