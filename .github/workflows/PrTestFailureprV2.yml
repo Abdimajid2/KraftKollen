@@ -36,6 +36,10 @@ jobs:
   add-comment-to-pr:
     runs-on: ubuntu-latest
     needs: test-and-report
+    permissions:
+      pull-requests: write  # Grant permission to write comments to pull requests
+      contents: read        # Grant permission to read the repository's contents (if required)
+
     
     steps:
       - name: Download Artifact
