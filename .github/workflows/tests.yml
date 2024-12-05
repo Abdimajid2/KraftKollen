@@ -11,26 +11,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0'
+      -  name: Checkout code
+         uses: actions/checkout@v4
           
-      - name: Restore dependencies
-        run: cd KraftKollen; dotnet restore
-
-      - name: Run tests and generate xUnit results
-        env:
-          DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: false
-          LANG: sv_SE.UTF-8
-          LC_ALL: sv_SE.UTF-8
-        run: cd KraftKollen; dotnet test KraftKollen.Tests/KraftKollen.Tests.csproj --no-restore --logger "xunit;LogFileName=test_results/results.xml" --verbosity normal
-
-      - name: List files in test_results directory
-        continue-on-error: true
-        run: |
-          echo "Listing contents of test_results directory..."
-          ls -lh test_results || echo "test_results directory does not exist."
+      -  name: Setup .NET
+         uses: actions/setup-dotnet@v4
+         with:
+            dotnet-version: '8.0' # Specify the version you're using, adjust as necessary
+            
+      -  name: Restore dependencies
+         run: cd KraftKollen; dotnet restore
+            
+      -  name: Run tests
+         env:
+           DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: false
+           LANG: sv_SE.UTF-8
+           LC_ALL: sv_SE.UTF-8
+         run: cd KraftKollen; dotnet test KraftKollen.Tests/KraftKollen.Tests.csproj --no-restore --verbosity normal
