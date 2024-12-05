@@ -12,6 +12,7 @@ permissions:
 jobs:
   test-and-report:
     runs-on: ubuntu-latest
+    continue-on-error: true  # Allow the job to continue even if tests fail.
 
     steps:
       - name: Checkout code
@@ -37,6 +38,11 @@ jobs:
         run: |
           echo "this is a test" > comment.md
 
+  comment-on-pr:
+    needs: test-and-report  # This job runs only after 'test-and-report'
+    runs-on: ubuntu-latest
+
+    steps:
       - name: Read Comment Content
         id: read-comment
         run: |
@@ -48,9 +54,7 @@ jobs:
           echo "Comment to be posted: ${{ env.comment }}"  # Debug log to see the comment content
 
       - name: Comment on Pull Request
-        if: success()  # Ensure this step runs if all previous steps were successful
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: "${{ env.comment }}"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
