@@ -38,7 +38,16 @@ jobs:
         run: |
           mkdir -p test_results
           dotnet test KraftKollen/KraftKollen.Tests/KraftKollen.Tests.csproj --logger "xunit;LogFileName=test_results/results.xml" --verbosity detailed
-          ls -R test_results # List the files in the test_results directory for debugging
+          echo "Test run completed, output saved to test_results/results.xml"
+          tail -n 50 test_results/results.xml # Skriv ut de sista 50 raderna från testresultatet för att minska mängden data
+
+      - name: Check test result file size
+        run: |
+          ls -lh test_results/results.xml
+          if [ ! -s test_results/results.xml ]; then
+            echo "Test result file is empty or does not exist!" && exit 1
+          fi
+
 
 
       # Upload test logs
