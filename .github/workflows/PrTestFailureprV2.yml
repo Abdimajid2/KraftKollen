@@ -41,7 +41,7 @@ jobs:
 
       # Upload test logs
       - name: Upload Test Logs
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: test-logs
           path: test_results/results.xml
