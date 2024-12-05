@@ -6,6 +6,10 @@ on:
     branches:
       - main
 
+permissions:
+  pull-requests: write
+
+
 jobs:
   test-and-report:
     runs-on: ubuntu-latest
