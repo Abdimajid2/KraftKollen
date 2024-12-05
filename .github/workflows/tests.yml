@@ -30,5 +30,7 @@ jobs:
         run: cd KraftKollen; dotnet test KraftKollen.Tests/KraftKollen.Tests.csproj --no-restore --logger "xunit;LogFileName=test_results/results.xml" --verbosity normal
 
       - name: List files in test_results directory
+        continue-on-error: true
         run: |
-          ls -lh test_results
+          echo "Listing contents of test_results directory..."
+          ls -lh test_results || echo "test_results directory does not exist."
