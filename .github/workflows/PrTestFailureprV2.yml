@@ -54,21 +54,34 @@ jobs:
           cat test_log.txt  # Replace with the actual path to your txt file in the artifact
 
     
-      - name: Extract Test Failures
-        id: extract-failures
+      - name: Extract and Format Test Failures
+        id: format-comment
         run: |
-          grep -oP '<failure message=.*?>.*?</failure>' test_results/results.xml > test_results/failures_summary.txt || echo "No failures found" > test_results/failures_summary.txt
-
-      - name: Format Test Failures for Comment
-        run: |
-          echo "### ❌ Test Failures Summary" > comment.md
-          echo "#### Below are the failed tests:" >> comment.md
-          while read -r line; do
-            message=$(echo "$line" | sed -E 's/<failure message="(.*?)">.*/\1/')
-            echo "- $message" >> comment.md
-          done < test_results/failures_summary.txt
-          echo "For full details, check the [workflow logs](${{ github.run_url }})." >> comment.md
+          echo "Extracting test failures..."
           
+          # Initialize an empty string to store formatted failures
+          formatted_comment="### ❌ Test Failures Summary\n"
+
+          # Extract failures and format them into a more readable format
+          grep -P '^\[xUnit.net.*FAIL\]' test_log.txt | while read -r line; do
+            # Extract the test name
+            test_name=$(echo "$line" | sed -E 's/\[xUnit.net.*\]     (.*) \[FAIL\]/\1/')
+            
+            # Extract the error message and expected/actual values
+            error_message=$(grep -A 3 "$test_name" test_log.txt | grep "Error Message" | sed -E 's/Error Message: (.*)/\1/')
+            expected=$(grep -A 3 "$test_name" test_log.txt | grep "Expected" | sed -E 's/Expected: (.*)/\1/')
+            actual=$(grep -A 3 "$test_name" test_log.txt | grep "Actual" | sed -E 's/Actual: (.*)/\1/')
+            
+            # Append the formatted details to the formatted_comment variable
+            formatted_comment+=$'\n#### Test: '"$test_name"$'\n'
+            formatted_comment+="Error Message: $error_message"$'\n'
+            formatted_comment+="Expected: $expected"$'\n'
+            formatted_comment+="Actual: $actual"$'\n'
+          done
+
+          # Set the formatted comment as an output
+          echo "::set-output name=comment::$formatted_comment"
+
       - name: Comment on Pull Request
         uses: thollander/actions-comment-pull-request@v1
         with:
