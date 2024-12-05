@@ -45,8 +45,9 @@ jobs:
 
       - name: List Artifact Contents
         run: |
-          echo "Listing contents of the downloaded artifact:"
-          ls -alh test_results/  # List contents in the 'test_results' directory
+          echo "Listing contents of the current directory:"
+          ls -alh  # List contents of the current directory to see if test_results is there
+
     
       - name: Extract Test Failures
         id: extract-failures
