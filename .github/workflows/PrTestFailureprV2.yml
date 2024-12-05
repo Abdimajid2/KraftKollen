@@ -6,14 +6,10 @@ on:
     branches:
       - main
 
-permissions:
-  pull-requests: write
-
 jobs:
   test-and-report:
     runs-on: ubuntu-latest
-    continue-on-error: true  # Allow the job to continue even if tests fail.
-
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -22,44 +18,32 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0'
-
+          
       - name: Run Tests and Generate xUnit Results
         id: run-tests
         run: |
           mkdir -p test_results
-          dotnet test KraftKollen/KraftKollen.Tests/KraftKollen.Tests.csproj --logger "xunit;LogFileName=test_results/results.xml"
-
+          dotnet test KraftKollen/KraftKollen.Tests/KraftKollen.Tests.csproj --logger "xunit;LogFileName=test_results/results.xml" || echo "Tests failed"
       - name: Extract Test Failures
+        if: failure()
         id: extract-failures
         run: |
           grep -oP '<failure message=.*?>.*?</failure>' test_results/results.xml > test_results/failures_summary.txt || echo "No failures found"
-
       - name: Format Test Failures for Comment
+        if: failure()
         run: |
-          echo "this is a test" > comment.md
-
-  comment-on-pr:
-    needs: test-and-report  # This job runs only after 'test-and-report'
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Ensure comment.md exists
-        run: |
-          ls -l # List files to ensure the comment.md file exists
-
-      - name: Read Comment Content
-        id: read-comment
-        run: |
-          cat comment.md  # Read the file content
-          comment=$(cat comment.md)
-          echo "comment=$comment" >> $GITHUB_ENV
-
-      - name: Debug Comment Content
-        run: |
-          echo "Comment to be posted: ${{ env.comment }}"  # Debug log to see the comment content
-
+          echo "### ❌ Test Failures Summary" > comment.md
+          echo "#### Below are the failed tests:" >> comment.md
+          while read -r line; do
+            message=$(echo "$line" | sed -E 's/<failure message="(.*?)">.*/\1/')
+            echo "- $message" >> comment.md
+          done < test_results/failures_summary.txt
+          echo "For full details, check the [workflow logs](${{ github.run_url }})." >> comment.md
+          
       - name: Comment on Pull Request
+        if: failure()
         uses: thollander/actions-comment-pull-request@v1
         with:
-          message: "${{ env.comment }}"
+          message: |
+            $(cat comment.md)
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
