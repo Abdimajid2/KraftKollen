@@ -45,11 +45,15 @@ jobs:
             echo "- $message" >> comment.md
           done < test_results/failures_summary.txt
           echo "For full details, check the [workflow logs](${{ github.run_url }})." >> comment.md
+
+      - name: Read Comment Content
+        id: read-comment
+        run: echo "comment=$(cat comment.md)" >> $GITHUB_ENV
+
           
       - name: Comment on Pull Request
         if: failure()
         uses: thollander/actions-comment-pull-request@v1
         with:
-          message: |
-            $(cat comment.md)
+          message: "${{ env.comment }}"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
