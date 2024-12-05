@@ -42,6 +42,11 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: test-results
+
+      - name: List Artifact Contents
+        run: |
+          echo "Listing contents of the downloaded artifact:"
+          ls -alh test_results/  # List contents in the 'test_results' directory
     
       - name: Extract Test Failures
         id: extract-failures
