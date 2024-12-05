@@ -1,11 +1,13 @@
 ﻿@rendermode InteractiveServer
 
 @page "/CompareTwoRegionsOutputView"
+
 @using KraftKollen.Components.Components
 @using KraftKollen.Helpers.Interfaces
 @using KraftKollen.Models
 @using KraftKollen.Repository
 @using KraftKollen.Repository.Models
+
 @inject IApiService ApiService
 @inject IYearComparisonIndicator yearComparisonIndicator
 
@@ -25,6 +27,7 @@
     @* TODO: These are not null since they are initialized as new() *@
     @if (_firstYearLargestValue != null && _secondYearLargestValue != null)
     {
+        // Returns a string depending on if any value is greater than the other
         var arrow = yearComparisonIndicator.GetYearComparisonIndicator(_firstYearLargestValue.Value, _secondYearLargestValue.Value);
 
         switch (arrow)
@@ -57,9 +60,10 @@
 @code {
     private List<Region> regions = AllRegions.GetAllRegions();
 
-    private RegionWithValue _firstYearLargestValue;
-    private RegionWithValue _secondYearLargestValue;
+    private RegionWithValue? _firstYearLargestValue;
+    private RegionWithValue? _secondYearLargestValue;
 
+    // The method executes when the GetTwoYearsComponent triggers a callback
     private async Task GetYearsAsync((int, int) selectedTwoYears)
     {
         var firstYear = selectedTwoYears.Item1.ToString();
@@ -76,6 +80,7 @@
 
         foreach (var region in regions)
         {
+            // Compares the new region with the old and returns the one that has the highest value
             currentLargestValue = await TryUpdateLargestValueAsync(currentLargestValue, region.Id);
         }
 
@@ -92,9 +97,11 @@
 
         if (regionWithLargestValue.Year != zeroAsString)
         {
+            // Calls Api Service to get the value of a region a specific year
             var result = await FetchWindPowerDataAsync(id, year);
             if (result.Value > previousValue && result.Value != null)
             {
+                // If the value of the new region is greater than the currently largest, it assigns the new values
                 updatedRegion = new()
                 {
                     Value = result.Value,
@@ -105,6 +112,7 @@
             }
         }
 
+        // The first time this is run the updatedRegion.Value is null this checks that and returns the largest value
         if (updatedRegion.Value != null && updatedRegion.Value > regionWithLargestValue.Value)
         {
             return updatedRegion;

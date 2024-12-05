@@ -8,8 +8,7 @@ namespace KraftKollen.Helpers
 
         public YearComparisonIndicatorFixture()
         {
-            // Initialize your dependency here
-            YearComparisonIndicator = new YearComparisonIndicator(); // Replace with actual implementation
+            YearComparisonIndicator = new YearComparisonIndicator(); 
         }
 
         public void Dispose()
