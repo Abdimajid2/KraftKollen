@@ -5,10 +5,9 @@ on:
   pull_request:
     branches:
       - main
-      
+
 permissions:
     pull-requests: write
-
 
 jobs:
   test-and-report:
@@ -28,11 +27,13 @@ jobs:
         run: |
           mkdir -p test_results
           dotnet test KraftKollen/KraftKollen.Tests/KraftKollen.Tests.csproj --logger "xunit;LogFileName=test_results/results.xml" 
+      
       - name: Extract Test Failures
         if: failure()
         id: extract-failures
         run: |
           grep -oP '<failure message=.*?>.*?</failure>' test_results/results.xml > test_results/failures_summary.txt || echo "No failures found"
+
       - name: Format Test Failures for Comment
         if: failure()
         run: |
@@ -43,11 +44,21 @@ jobs:
             echo "- $message" >> comment.md
           done < test_results/failures_summary.txt
           echo "For full details, check the [workflow logs](${{ github.run_url }})." >> comment.md
-          
+
+      - name: Set Comment Content as Environment Variable
+        if: failure()
+        run: |
+          comment=$(cat comment.md)
+          echo "comment=$comment" >> $GITHUB_ENV
+
+  comment-on-pr:
+    needs: test-and-report  # This job runs only after 'test-and-report'
+    runs-on: ubuntu-latest
+
+    steps:
       - name: Comment on Pull Request
         if: failure()
         uses: thollander/actions-comment-pull-request@v1
         with:
-          message: |
-            $(cat comment.md)
+          message: "${{ env.comment }}"  # Use the environment variable containing the comment
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
