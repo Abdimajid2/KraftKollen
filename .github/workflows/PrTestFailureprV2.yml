@@ -75,7 +75,7 @@ jobs:
 
       # Format för kommentar om testfel
       - name: Format Test Failures for Comment
-        if: failure() && fileExists('test_results/failures_summary.txt')
+        if: failure()
         run: |
           echo "### ❌ Test Failures Summary" > comment.md
           echo "#### Below are the failed tests:" >> comment.md
@@ -87,7 +87,7 @@ jobs:
 
       # Sätt kommentarens innehåll som en miljövariabel (endast om kommentar.md finns)
       - name: Set Comment Content as Environment Variable
-        if: failure() && fileExists('comment.md')
+        if: failure() && test -f comment.md
         run: |
           comment=$(cat comment.md)
           echo "comment<<EOF" >> $GITHUB_ENV
@@ -96,19 +96,10 @@ jobs:
 
       # Kommentera på PR (endast om kommentar.md har skapats)
       - name: comment-on-pr
-        if: failure() && fileExists('comment.md')
+        if: failure() && test -f comment.md
         uses: thollander/actions-comment-pull-request@v1
         with:
               message: "${{ env.comment }}"
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # Kontrollera om en fil finns
-      - name: fileExists
-        run: |
-          if [ -f "comment.md" ]; then
-            echo "File comment.md exists."
-          else
-            echo "File comment.md does not exist."
-          fi
 
 
