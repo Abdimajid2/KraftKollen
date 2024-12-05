@@ -38,13 +38,8 @@ jobs:
       - name: Format Test Failures for Comment
         if: failure()
         run: |
-          echo "### ❌ Test Failures Summary" > comment.md
-          echo "#### Below are the failed tests:" >> comment.md
-          while read -r line; do
-            message=$(echo "$line" | sed -E 's/<failure message="(.*?)">.*/\1/')
-            echo "- $message" >> comment.md
-          done < test_results/failures_summary.txt
-          echo "For full details, check the [workflow logs](${{ github.run_url }})." >> comment.md
+          echo "this is a test" > comment.md
+
 
       - name: Read Comment Content
         id: read-comment
