@@ -28,3 +28,18 @@
 </select>
 <p>You selected: @selectedYearOne and @selectedYearTwo</p>
 <button @onclick="FetchTwoYears">Hämta data</button>
+
+
+@code {
+    private List<int> years = new List<int> { 2016, 2017, 2018, 2019, 2020, 2021 };
+    private int selectedYearOne;
+    private int selectedYearTwo;
+
+    [Parameter]
+    public EventCallback<(int, int)> OnTwoYearsSelected { get; set; }
+
+    private async Task FetchTwoYears()
+    {
+        await OnTwoYearsSelected.InvokeAsync((selectedYearOne, selectedYearTwo));
+    }
+}
