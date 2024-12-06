@@ -1,0 +1,90 @@
+﻿@rendermode InteractiveServer
+@page "/TopProductionYears"
+@using KraftKollen.Helpers.Interfaces
+@using KraftKollen.Models
+@using KraftKollen.Repository
+@inject IApiService apiService
+@inject ITopProduction productionAnalyzer
+
+<h3>Topp 3 Produktionsår för Vindkraft</h3>
+
+<div>
+    <label for="region">Välj region:</label>
+    <select id="region" @bind="selectedRegionId">
+        @foreach (var region in regions)
+        {
+            <option value="@region.Id">@region.Name</option>
+        }
+    </select>
+
+    <label for="yearRange">Välj år:</label>
+    <select id="startYear" @bind="startYear">
+        @foreach (var year in availableYears)
+        {
+            <option value="@year">@year</option>
+        }
+    </select>
+    <select id="endYear" @bind="endYear">
+        @foreach (var year in availableYears.Where(year => year >= startYear))
+        {
+            <option value="@year">@year</option>
+        }
+    </select>
+
+    <button @onclick="LoadTopProductionYears">Hämta Topp 3</button>
+</div>
+
+<div>
+    @if (topYears != null && topYears.Any())
+    {
+        <h4>De tre år med högst produktion:</h4>
+        <ol>
+            @foreach (var year in topYears)
+            {
+                <li>År: @year.Year, Produktion: @year.Production Mw/h</li>
+            }
+        </ol>
+    }
+    else
+    {
+        <p>Ingen data att visa</p>
+    }
+</div>
+
+@code {
+    private List<Region> regions = AllRegions.GetAllRegions();
+    private string selectedRegionId = "0001"; // Default till Stockholm
+    private List<int> availableYears = Enumerable.Range(2000, DateTime.Now.Year - 1999).ToList();
+    private int startYear = 2012;
+    private int endYear = 2023;
+    private List<(int Year, double Production)> topYears = new();
+
+    private async Task LoadTopProductionYears()
+    {
+        topYears.Clear();
+
+        try
+        {
+            var productionData = new List<WindPowerProduction>();
+
+            for (int year = startYear; year <= endYear; year++)
+            {
+                var data = await apiService.GetWindPowerProduction(selectedRegionId, year.ToString());
+                if (data.Value != null)
+                {
+                    productionData.Add(data);
+                }
+            }
+
+            if (productionData.Any())
+            {
+                topYears = productionAnalyzer.GetTopProductionYears(productionData);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+       
+    }
+}
