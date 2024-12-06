@@ -56,7 +56,6 @@ jobs:
         run: |
           echo "Displaying contents of test_log.txt:"
           cat test_log.txt  # Replace with the actual path to your txt file in the artifact
-
     
       - name: Extract and Format Test Failures
         id: format-comment
@@ -66,30 +65,33 @@ jobs:
           # Initialize an empty string to store formatted failures
           formatted_comment="### ❌ Test Failures Summary\n"
           
-          # Extract failures and format them into a more readable format
-          grep -P '^\[xUnit.net.*FAIL\]' test_log.txt || echo "No failures found"  # Debugging line
+          # Start processing the log file with awk
+          awk '
+            # Look for lines starting with "[xUnit.net" that indicate a test failure
+            /^\[xUnit.net.*FAIL\]/ {
+              # Start capturing the failure block
+              in_failure_block = 1
+              test_name = substr($0, index($0, "]") + 2)
+              formatted_failure = "#### Test: " test_name "\n"
+            }
           
-          # Extract failures and format them into a more readable format
-          grep -P '^\[xUnit.net.*FAIL\]' test_log.txt | while read -r line; do
-            echo "Matched line: $line"  # Debugging line
-            
-            # Extract the test name
-            test_name=$(echo "$line" | sed -E 's/\[xUnit.net.*\]     (.*) \[FAIL\]/\1/')
-            echo "Test name: $test_name"  # Debugging line
-          
-            # Capture the failure block starting from the line with "Failed"
-            failure_block=$(awk "/$test_name/,/\(pos [0-9]+\)/" test_log.txt)
-          
-            # Extract error message, expected, and actual values from the failure block
-            error_message=$(echo "$failure_block" | grep -A 3 "Error Message" | sed -E 's/Error Message: (.*)/\1/')
-            expected=$(echo "$failure_block" | grep -A 3 "Expected" | sed -E 's/Expected: (.*)/\1/')
-            actual=$(echo "$failure_block" | grep -A 3 "Actual" | sed -E 's/Actual: (.*)/\1/')
-          
-            # Append the formatted details to the formatted_comment variable
-            formatted_comment+=$'\n#### Test: '"$test_name"$'\n'
-            formatted_comment+="Error Message: $error_message"$'\n'
-            formatted_comment+="Expected: $expected"$'\n'
-            formatted_comment+="Actual: $actual"$'\n'
+            # Capture all lines while we are inside a failure block
+            in_failure_block {
+              # Append the line to the formatted failure block
+              formatted_failure = formatted_failure $0 "\n"
+              
+              # Check if we have found the second (pos <number>) line
+              if ($0 ~ /\(pos [0-9]+\)/) {
+                if (++count == 2) {
+                  in_failure_block = 0
+                  # Store the formatted failure block
+                  print formatted_failure
+                }
+              }
+            }
+          ' test_log.txt | while read -r line; do
+            # If we have a formatted failure block, capture it and format it into the final comment
+            formatted_comment+="$line"
           done
           
           # Set the formatted comment as an output
