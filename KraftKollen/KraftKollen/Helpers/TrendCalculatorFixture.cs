@@ -21,22 +21,22 @@ namespace KraftKollen.Helpers
             TrendCalculator = new TrendCalculator();
             IncreasingTrendData = new List<WindPowerProduction>
             {
-                new WindPowerProduction { Period = 2023, Value = 100 },
-                new WindPowerProduction { Period = 2024, Value = 200 }
+                new () { Period = 2023, Value = 100 },
+                new () { Period = 2024, Value = 200 }
             };
             DecreasingTrendData = new List<WindPowerProduction>
             {
-                new WindPowerProduction { Period = 2023, Value = 200 },
-                new WindPowerProduction { Period = 2024, Value = 100 }
+                new () { Period = 2023, Value = 200 },
+                new () { Period = 2024, Value = 100 }
             };
             UnchangedTrendData = new List<WindPowerProduction>
             {
-                new WindPowerProduction { Period = 2023, Value = 100 },
-                new WindPowerProduction { Period = 2024, Value = 100 }
+                new () { Period = 2023, Value = 100 },
+                new () { Period = 2024, Value = 100 }
             };
             InsufficientTrendData = new List<WindPowerProduction>
             {
-                new WindPowerProduction { Period = 2023, Value = 100 }
+                new () { Period = 2023, Value = 100 }
             };
         }
     }
