@@ -1,5 +1,6 @@
 ﻿using KraftKollen.Helpers.Interfaces;
 using KraftKollen.Models;
+using System.Threading;
 
 namespace KraftKollen.Helpers
 {
@@ -10,7 +11,7 @@ namespace KraftKollen.Helpers
         {
             if (data.Count < 2)
             {
-                return "Not enough data to calculate a trend.";
+                return "Kan ej hitta trend.";
             }
 
             
@@ -22,15 +23,15 @@ namespace KraftKollen.Helpers
 
             if (lastValue > firstValue)
             {
-                return "Trend goes up.";
+                return "Trendens stiger!";
             }
             else if (lastValue < firstValue)
             {
-                return "Trend goes down.";
+                return "Trenden sjunker!";
             }
             else
             {
-                return "Trend is unchanged.";
+                return "Trenden orubbad!";
             }
         }
     }

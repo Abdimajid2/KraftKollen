@@ -22,10 +22,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <AdditionalFiles Include="Components\View\Template.razor" />
-    </ItemGroup>
-
-    <ItemGroup>
       <UpToDateCheckInput Remove="Components\Pages\Error.razor" />
       <UpToDateCheckInput Remove="Components\Pages\Home.razor" />
     </ItemGroup>
