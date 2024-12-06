@@ -62,32 +62,36 @@ jobs:
         id: format-comment
         run: |
           echo "Extracting test failures..."
-          
+
           # Initialize an empty string to store formatted failures
           formatted_comment="### ❌ Test Failures Summary\n"
-
+          
           # Extract failures and format them into a more readable format
-          grep -P '^\[xUnit.net.*FAIL\]' test_log.txt || echo "No failures found" # Debugging line
-
+          grep -P '^\[xUnit.net.*FAIL\]' test_log.txt || echo "No failures found"  # Debugging line
+          
           # Extract failures and format them into a more readable format
           grep -P '^\[xUnit.net.*FAIL\]' test_log.txt | while read -r line; do
             echo "Matched line: $line"  # Debugging line
+            
             # Extract the test name
             test_name=$(echo "$line" | sed -E 's/\[xUnit.net.*\]     (.*) \[FAIL\]/\1/')
             echo "Test name: $test_name"  # Debugging line
-
-            # Extract the error message and expected/actual values
-            error_message=$(grep -A 3 "$test_name" test_log.txt | grep "Error Message" | sed -E 's/Error Message: (.*)/\1/')
-            expected=$(grep -A 3 "$test_name" test_log.txt | grep "Expected" | sed -E 's/Expected: (.*)/\1/')
-            actual=$(grep -A 3 "$test_name" test_log.txt | grep "Actual" | sed -E 's/Actual: (.*)/\1/')
-            
+          
+            # Capture the failure block starting from the line with "Failed"
+            failure_block=$(awk "/$test_name/,/\(pos [0-9]+\)/" test_log.txt)
+          
+            # Extract error message, expected, and actual values from the failure block
+            error_message=$(echo "$failure_block" | grep -A 3 "Error Message" | sed -E 's/Error Message: (.*)/\1/')
+            expected=$(echo "$failure_block" | grep -A 3 "Expected" | sed -E 's/Expected: (.*)/\1/')
+            actual=$(echo "$failure_block" | grep -A 3 "Actual" | sed -E 's/Actual: (.*)/\1/')
+          
             # Append the formatted details to the formatted_comment variable
             formatted_comment+=$'\n#### Test: '"$test_name"$'\n'
             formatted_comment+="Error Message: $error_message"$'\n'
             formatted_comment+="Expected: $expected"$'\n'
             formatted_comment+="Actual: $actual"$'\n'
           done
-
+          
           # Set the formatted comment as an output
           echo "::set-output name=comment::$formatted_comment"
 
