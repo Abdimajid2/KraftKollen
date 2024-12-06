@@ -40,7 +40,6 @@ jobs:
       pull-requests: write  # Grant permission to write comments to pull requests
       contents: read        # Grant permission to read the repository's contents (if required)
 
-    
     steps:
       - name: Download Artifact
         uses: actions/download-artifact@v4
@@ -61,12 +60,12 @@ jobs:
         id: format-comment
         run: |
           echo "Extracting test failures..."
-
+      
           # Initialize an empty string to store formatted failures
           formatted_comment="### ❌ Test Failures Summary\n"
           
           # Start processing the log file with awk
-          awk '
+          formatted_comment+=$(awk '
             # Look for lines starting with "[xUnit.net" that indicate a test failure
             /^\[xUnit.net.*FAIL\]/ {
               # Start capturing the failure block
@@ -74,7 +73,7 @@ jobs:
               test_name = substr($0, index($0, "]") + 2)
               formatted_failure = "#### Test: " test_name "\n"
             }
-          
+            
             # Capture all lines while we are inside a failure block
             in_failure_block {
               # Append the line to the formatted failure block
@@ -89,16 +88,13 @@ jobs:
                 }
               }
             }
-          ' test_log.txt | while read -r line; do
-            # If we have a formatted failure block, capture it and format it into the final comment
-            formatted_comment+="$line"
-          done
+          ' test_log.txt)
           
-          # Set the formatted comment as an output
-          echo "::set-output name=comment::$formatted_comment"
-
+          # Output the formatted comment so it can be used in subsequent steps
+          echo "formatted_comment=$formatted_comment" >> $GITHUB_ENV
+      
       - name: Comment on Pull Request
         uses: thollander/actions-comment-pull-request@v1
         with:
-          message: ${{ steps.format-comment.outputs.comment }}
+          message: ${{ env.formatted_comment }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
