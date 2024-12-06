@@ -1,8 +1,12 @@
 @page "/AverageProduction"
 @using KraftKollen.Repository
+@using KraftKollen.Helpers.Interfaces
 @using KraftKollen.Components.Components
+@using KraftKollen.Helpers
 @rendermode InteractiveServer
 @inject IApiService ApiService
+@inject IAverageProduction Average
+
 <h3>AverageProduction</h3>
 <GetDataByRegionComponent OnRegionsSelected="UpdateRegion"></GetDataByRegionComponent>
 <GetTwoYearsComponent OnTwoYearsSelected="UpdateYears"></GetTwoYearsComponent>
@@ -32,39 +36,22 @@ else
             averageProduction = 0;
             return;
         }
-
-        var years = new List<string> { selectedYears.Item1.ToString(), selectedYears.Item2.ToString() };
-        var productionValues = new List<double>();
+        
+        //måste generera alla åren i mellan
+        var years = Enumerable.Range(selectedYears.Item1, selectedYears.Item2 - selectedYears.Item1 + 1)
+            .Select(y => y.ToString())
+            .ToList();
+    
         try
         {
-            foreach (var year in years)
+            averageProduction = await Average.ProductionForYears(selectedRegion, years);
+            if (averageProduction > 0)
             {
-                var data = await ApiService.GetWindPowerProduction(selectedRegion, year.ToString());
-                if (data.Value != null)
-                {
-                    productionValues.Add((double)data.Value);
-                }
-                // TODO
-                // if (data?.values != null)
-                // {
-                //     var YearsValue = data?.values.
-                //         SelectMany(x => x.values)
-                //         .Where(v => v.value.HasValue )
-                //         .Average(v1 => v1.value);
-                    
-                //     productionValues.Add(YearsValue.Value);
-                // }
-            }
-
-            if (productionValues.Any())
-            {
-                averageProduction = productionValues.Average();
                 erromessage = string.Empty;
             }
-            else
+
             {
-                averageProduction = 0;  
-                erromessage = "ingen data för dessa år";   
+                erromessage = "inget data för dessa år";
             }
         }
         catch (Exception e)
