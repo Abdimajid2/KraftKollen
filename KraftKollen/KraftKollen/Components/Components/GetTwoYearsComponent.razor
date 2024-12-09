@@ -11,7 +11,7 @@
         await OnTwoYearsSelected.InvokeAsync((selectedYearOne, selectedYearTwo));
     }
 }
-<h3>Select Two Years to Compare</h3>
+<h3>Välj start och slut år</h3>
 
 <select @bind="selectedYearOne">
     @foreach (var year in years)
@@ -26,5 +26,5 @@
         <option value="@year">@year</option>
     }
 </select>
-<p>You selected: @selectedYearOne and @selectedYearTwo</p>
+<p>Du valde: @selectedYearOne till @selectedYearTwo</p>
 <button @onclick="FetchTwoYears">Hämta data</button>
