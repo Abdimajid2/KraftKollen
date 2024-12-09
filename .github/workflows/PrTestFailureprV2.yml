@@ -39,6 +39,7 @@ jobs:
     permissions:
       pull-requests: write  # Behörighet att skriva kommentarer till PR
       contents: read        # Behörighet att läsa innehåll i repot
+    continue-on-error: true  # Se till att kommentaren alltid läggs till, även om tester misslyckas
 
     steps:
       - name: Download Artifact
