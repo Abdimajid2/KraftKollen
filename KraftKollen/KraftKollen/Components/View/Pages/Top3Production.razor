@@ -1,13 +1,12 @@
-@rendermode InteractiveServer
-@page "/TrendAnalys"
+﻿@rendermode InteractiveServer
+@page "/TopProductionYears"
 @using KraftKollen.Helpers.Interfaces
 @using KraftKollen.Models
 @using KraftKollen.Repository
-@using KraftKollen.Repository.Models
 @inject IApiService apiService
-@inject ITrendCalculator trendCalculator
+@inject ITopProduction productionAnalyzer
 
-<h3>Trendanalys för Vindkraft</h3>
+<h3>Topp 3 Produktionsår för Vindkraft</h3>
 
 <div>
     <label for="region">Välj region:</label>
@@ -32,20 +31,19 @@
         }
     </select>
 
-    <button @onclick="LoadData">Ladda Data</button>
+    <button @onclick="LoadTopProductionYears">Hämta Topp 3</button>
 </div>
 
 <div>
-    @if (trendData != null)
+    @if (topYears != null && topYears.Any())
     {
-        <h4>Trend: @(trendResult)</h4>
-        <ul>
-            @foreach (var value in trendData)
+        <h4>De tre år med högst produktion:</h4>
+        <ol>
+            @foreach (var year in topYears)
             {
-                <li>År: @value.Period, Värde: @string.Join(", ", value.Value) Mw/h</li>
-
+                <li>År: @year.Year, Produktion: @year.Production Mw/h</li>
             }
-        </ul>
+        </ol>
     }
     else
     {
@@ -57,51 +55,36 @@
     private List<Region> regions = AllRegions.GetAllRegions();
     private string selectedRegionId = "0001"; // Default till Stockholm
     private List<int> availableYears = Enumerable.Range(2000, DateTime.Now.Year - 1999).ToList();
-    private int startYear = 2020;
+    private int startYear = 2012;
     private int endYear = 2023;
-    private List<WindPowerProduction> trendData = new List<WindPowerProduction>();
-    private string trendResult;
+    private List<(int Year, double Production)> topYears = new();
 
-    private async Task LoadData()
+    private async Task LoadTopProductionYears()
     {
-        trendData.Clear();
+        topYears.Clear();
 
-        if(startYear == endYear)
-        {
-            trendResult = "Startyear och endyear kan inte vara samma, kan inte hitta trend.";
-            return;
-        }
         try
         {
+            var productionData = new List<WindPowerProduction>();
 
             for (int year = startYear; year <= endYear; year++)
             {
                 var data = await apiService.GetWindPowerProduction(selectedRegionId, year.ToString());
-
                 if (data.Value != null)
                 {
-                    trendData.Add(data);
+                    productionData.Add(data);
                 }
-
             }
 
-            // Kontrollera om vi fick någon data
-            if (trendData.Any())
+            if (productionData.Any())
             {
-                trendResult = trendCalculator.CalculateTrend(trendData);
-            }
-            else
-            {
-                trendResult = "No data found.";
+                topYears = productionAnalyzer.GetTopProductionYears(productionData);
             }
         }
         catch (Exception ex)
         {
-            trendResult = $"Error: {ex.Message}";
+            Console.WriteLine($"Error: {ex.Message}");
         }
-
+       
     }
-
-
-
 }
