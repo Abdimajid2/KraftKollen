@@ -9,7 +9,7 @@ on:
 jobs:
   test-and-report:
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -20,14 +20,12 @@ jobs:
           dotnet-version: '8.0'
 
       - name: Run Tests and Generate xUnit Results
-        id: test
         run: |
           mkdir -p test_results
           # Kör tester och skapa logg
-          dotnet test KraftKollen/KraftKollen.Tests/KraftKollen.Tests.csproj --logger "xunit;LogFileName=test_results/results.xml" > test_results/test_log.txt 2>&1
+          dotnet test KraftKollen/KraftKollen.Tests/KraftKollen.Tests.csproj --logger "xunit;LogFileName=test_results/results.xml" > test_results/test_log.txt 2>&1 || true
           echo "Contents of test_results directory after running tests:"
           ls -l test_results
-        continue-on-error: true  # Se till att workflow fortsätter trots fel
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
@@ -52,7 +50,7 @@ jobs:
         run: |
           echo "Listing all files after artifact download:"
           ls -R
-          echo "Checking for test_log.txt in the root directory:"
+          echo "Checking for test_log.txt in root directory:"
           if [ -f "test_log.txt" ]; then
             echo "test_log.txt found"
           else
@@ -65,15 +63,13 @@ jobs:
         run: |
           echo "Extracting test failures..."
           formatted_comment="### ❌ Test Failures Summary\n"
-          
-          # Extrahera misslyckade tester från loggen
           awk '
             /^\[xUnit.net.*FAIL\]/ {
               in_failure_block = 1
               test_name = substr($0, index($0, "]") + 2)
               formatted_failure = "#### Test: " test_name "\n"
             }
-      
+            
             in_failure_block {
               formatted_failure = formatted_failure $0 "\n"
               if ($0 ~ /\(pos [0-9]+\)/) {
@@ -84,14 +80,13 @@ jobs:
               }
             }
           ' test_log.txt > extracted_failures.txt
-          
-          # Om inga felaktiga tester finns, skriv en kommentar om det
-          if [ ! -s extracted_failures.txt ]; then
-            formatted_comment="### ✅ No Test Failures Found"
-          else
-            formatted_comment+=$(cat extracted_failures.txt)
-          fi
-      
+          formatted_comment+=$(cat extracted_failures.txt)
           echo "formatted_comment<<EOF" >> $GITHUB_ENV
           echo -e "$formatted_comment" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
+
+      - name: Comment on Pull Request
+        uses: thollander/actions-comment-pull-request@v1
+        with:
+          message: ${{ env.formatted_comment }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
