@@ -31,12 +31,11 @@ jobs:
 
       - name: Check for Test Failures
         id: check-tests
-        continue-on-error: true # Fortsätt även om testerna misslyckas
         run: |
           if grep -q "Failed" test_results/test_log.txt; then
             echo "Tests failed!"
             echo "test_failed=true" >> $GITHUB_ENV
-            exit 1  # Markerar detta steg som misslyckat (rött kryss)
+            exit 1  # Markerar detta steg som misslyckat
           else
             echo "All tests passed."
             echo "test_failed=false" >> $GITHUB_ENV
