@@ -20,13 +20,15 @@ jobs:
           dotnet-version: '8.0'
 
       - name: Run Tests and Generate xUnit Results
+        id: test
         run: |
           mkdir -p test_results
           # Kör tester och skapa logg
-          dotnet test KraftKollen/KraftKollen.Tests/KraftKollen.Tests.csproj --logger "xunit;LogFileName=test_results/results.xml" > test_results/test_log.txt 2>&1 || true
+          dotnet test KraftKollen/KraftKollen.Tests/KraftKollen.Tests.csproj --logger "xunit;LogFileName=test_results/results.xml" > test_results/test_log.txt 2>&1
           echo "Contents of test_results directory after running tests:"
           ls -l test_results
-        continue-on-error: true  # Detta gör att workflowet fortsätter även om testerna misslyckas
+
+        continue-on-error: true  # Gör så att jobbet fortsätter även om testerna misslyckas
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
@@ -52,7 +54,7 @@ jobs:
           echo "Listing all files after artifact download:"
           ls -R
           echo "Checking for test_log.txt in root directory:"
-          if [ -f "test_log.txt" ]; then
+          if [ -f "test_results/test_log.txt" ]; then
             echo "test_log.txt found"
           else
             echo "test_log.txt not found"
@@ -64,6 +66,7 @@ jobs:
         run: |
           echo "Extracting test failures..."
           formatted_comment="### ❌ Test Failures Summary\n"
+          # Extrahera misslyckade tester från testloggen
           awk '
             /^\[xUnit.net.*FAIL\]/ {
               in_failure_block = 1
