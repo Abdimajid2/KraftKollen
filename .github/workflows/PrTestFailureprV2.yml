@@ -36,13 +36,13 @@ jobs:
           path: test_results
 
   add-comment-to-pr:
-      runs-on: ubuntu-latest
-      needs: test-and-report
-      permissions:
-        pull-requests: write  # Behörighet att skriva kommentarer till PR
-        contents: read        # Behörighet att läsa innehåll i repot
+    runs-on: ubuntu-latest
+    needs: test-and-report
+    permissions:
+      pull-requests: write  # Behörighet att skriva kommentarer till PR
+      contents: read        # Behörighet att läsa innehåll i repot
 
-      steps:
+    steps:
       - name: Download Artifact
         uses: actions/download-artifact@v4
         with:
@@ -52,8 +52,8 @@ jobs:
         run: |
           echo "Listing all files after artifact download:"
           ls -R
-          echo "Checking for test_log.txt in test_results directory:"
-          if [ -f "test_results/test_log.txt" ]; then
+          echo "Checking for test_log.txt in the root directory:"
+          if [ -f "test_log.txt" ]; then
             echo "test_log.txt found"
           else
             echo "test_log.txt not found"
@@ -83,21 +83,14 @@ jobs:
                 }
               }
             }
-          ' test_results/test_log.txt > extracted_failures.txt
+          ' test_log.txt > extracted_failures.txt
 
           # Om inga felaktiga tester finns, skriv en kommentar om det
           if [ ! -s extracted_failures.txt ]; then
             formatted_comment="### ✅ No Test Failures Found"
           else
             formatted_comment+=$(cat extracted_failures.txt)
-          fi
+   
 
-          echo "formatted_comment<<EOF" >> $GITHUB_ENV
-          echo -e "$formatted_comment" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-
-      - name: Comment on Pull Request
-        uses: thollander/actions-comment-pull-request@v1
-        with:
           message: ${{ env.formatted_comment }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
