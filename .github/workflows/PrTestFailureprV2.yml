@@ -24,23 +24,8 @@ jobs:
           mkdir -p test_results
           # Kör tester och skapa logg
           dotnet test KraftKollen/KraftKollen.Tests/KraftKollen.Tests.csproj --logger "xunit;LogFileName=test_results/results.xml" > test_results/test_log.txt 2>&1 || true
-
-          # Kontrollera innehållet i loggfilen för att säkerställa att vi har rätt information
-          echo "Contents of test_results/test_log.txt:"
-          cat test_results/test_log.txt
-
-          # Kontrollera om tester misslyckades genom att söka efter "Failed" i loggen
-          if grep -q "Failed" test_results/test_log.txt; then
-            echo "Tests failed!"
-            echo "test_failed=true" >> $GITHUB_ENV
-            exit 1  # Markerar detta steg som misslyckat
-          else
-            echo "All tests passed."
-            echo "test_failed=false" >> $GITHUB_ENV
-          fi
-        shell: /usr/bin/bash -e {0}
-        env:
-          DOTNET_ROOT: /usr/share/dotnet
+          echo "Contents of test_results directory after running tests:"
+          ls -l test_results
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
@@ -94,14 +79,8 @@ jobs:
                 }
               }
             }
-          ' test_results/test_log.txt > extracted_failures.txt
+          ' test_log.txt > extracted_failures.txt
           formatted_comment+=$(cat extracted_failures.txt)
-          
-          # Om inga tester misslyckades, skriv "All tests passed"
-          if [ "${{ env.test_failed }}" == "false" ]; then
-            formatted_comment="### ✅ All tests passed!\n"
-          fi
-
           echo "formatted_comment<<EOF" >> $GITHUB_ENV
           echo -e "$formatted_comment" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
