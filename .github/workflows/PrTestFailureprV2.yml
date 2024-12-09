@@ -47,6 +47,14 @@ jobs:
         with:
           name: test-results
 
+      - name: Verify Downloaded Files
+        run: |
+          echo "Listing all files and directories:"
+          ls -R
+          echo "Contents of test_results directory:"
+          ls -l test_results || echo "test_results directory not found"
+
+
       - name: Debug Artifact Download
         run: |
           echo "Contents after downloading artifact:"
