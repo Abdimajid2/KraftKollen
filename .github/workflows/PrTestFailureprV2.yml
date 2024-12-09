@@ -37,6 +37,10 @@ jobs:
             echo "test_failed=false" >> $GITHUB_ENV
           fi
 
+      - name: Fail Job if Tests Failed
+        if: env.test_failed == 'true'
+        run: exit 1
+
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
         with:
@@ -56,25 +60,13 @@ jobs:
         with:
           name: test-results
 
-      - name: Verify Downloaded Files
-        run: |
-          echo "Listing all files after artifact download:"
-          ls -R
-          echo "Checking for test_log.txt in root directory:"
-          if [ -f "test_log.txt" ]; then
-            echo "test_log.txt found"
-          else
-            echo "test_log.txt not found"
-            exit 1
-          fi
-
       - name: Extract and Format Test Failures
         id: format-comment
         run: |
           echo "Test failed status: ${{ env.test_failed }}"
           formatted_comment="### Test Results\n"
 
-          if [[ "$test_failed" == "true" ]]; then
+          if [ "${{ env.test_failed }}" == "true" ]; then
             formatted_comment+="### ❌ Test Failures Summary\n"
             awk '
               /^\[xUnit.net.*FAIL\]/ {
