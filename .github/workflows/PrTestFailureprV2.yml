@@ -9,8 +9,8 @@ on:
 jobs:
   test-and-report:
     runs-on: ubuntu-latest
-    continue-on-error: true  # Gör så att hela jobben fortsätter även om tester misslyckas
-    
+    continue-on-error: true  # Gör så att steget inte stoppar workflowet om det misslyckas
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -64,15 +64,13 @@ jobs:
         run: |
           echo "Extracting test failures..."
           formatted_comment="### ❌ Test Failures Summary\n"
-          
-          # Extrahera misslyckade tester från loggen
           awk '
             /^\[xUnit.net.*FAIL\]/ {
               in_failure_block = 1
               test_name = substr($0, index($0, "]") + 2)
               formatted_failure = "#### Test: " test_name "\n"
             }
-
+            
             in_failure_block {
               formatted_failure = formatted_failure $0 "\n"
               if ($0 ~ /\(pos [0-9]+\)/) {
@@ -83,19 +81,13 @@ jobs:
               }
             }
           ' test_log.txt > extracted_failures.txt
-          
-          # Om inga felaktiga tester finns, skriv en kommentar om det
-          if [ ! -s extracted_failures.txt ]; then
-            formatted_comment="### ✅ No Test Failures Found"
-          else
-            formatted_comment+=$(cat extracted_failures.txt)
-          fi
-          
-          # Sätt den formaterade kommentaren i GitHub Actions miljön
-          echo "FORMATTED_COMMENT=${formatted_comment}" >> $GITHUB_ENV
+          formatted_comment+=$(cat extracted_failures.txt)
+          echo "formatted_comment<<EOF" >> $GITHUB_ENV
+          echo -e "$formatted_comment" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Comment on Pull Request
         uses: thollander/actions-comment-pull-request@v1
         with:
-          message: ${{ env.FORMATTED_COMMENT }}
+          message: ${{ env.formatted_comment }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
