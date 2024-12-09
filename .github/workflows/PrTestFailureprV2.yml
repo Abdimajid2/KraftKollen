@@ -23,9 +23,8 @@ jobs:
         id: run-tests
         run: |
           mkdir -p test_results
-          # Run tests and capture both standard output and errors into a log file
           dotnet test KraftKollen/KraftKollen.Tests/KraftKollen.Tests.csproj --logger "xunit;LogFileName=test_results/results.xml" > test_results/test_log.txt 2>&1 || true
-          echo "Test step completed. Checking if test_log.txt exists:"
+          echo "Contents of test_results directory after running tests:"
           ls -l test_results
         continue-on-error: true
 
@@ -48,18 +47,12 @@ jobs:
         with:
           name: test-results
 
-      - name: List Artifact Contents
+      - name: Debug Artifact Download
         run: |
-          echo "Listing contents of the current directory:"
-          ls -alh  # List contents of the current directory
-          
-      - name: Debug Artifact Contents
-        run: |
-          echo "Contents of downloaded artifact:"
+          echo "Contents after downloading artifact:"
           ls -R
-          echo "Contents of test_results directory:"
+          echo "Checking test_results directory:"
           ls -l test_results || echo "test_results directory does not exist"
-          cat test_results/test_log.txt || echo "test_log.txt does not exist"
           
       - name: Extract and Format Test Failures
         id: format-comment
