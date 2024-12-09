@@ -26,6 +26,7 @@ jobs:
           dotnet test KraftKollen/KraftKollen.Tests/KraftKollen.Tests.csproj --logger "xunit;LogFileName=test_results/results.xml" > test_results/test_log.txt 2>&1
           echo "Contents of test_results directory after running tests:"
           ls -l test_results
+        continue-on-error: true  # Detta tillåter att jobben fortsätter även om testerna misslyckas
 
       - name: Extract and Format Test Failures
         id: format-comment
