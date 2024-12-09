@@ -32,7 +32,7 @@ jobs:
         with:
           name: test-results
           path: test_results
- 
+          
   add-comment-to-pr:
     runs-on: ubuntu-latest
     needs: test-and-report
@@ -50,48 +50,46 @@ jobs:
         run: |
           echo "Listing contents of the current directory:"
           ls -alh  # List contents of the current directory to see if test_results is there
-
+          
       - name: View Contents of test_log.txt
         run: |
           echo "Displaying contents of test_log.txt:"
-          cat test_log.txt  # Replace with the actual path to your txt file in the artifact
+          cat test_results/test_log.txt  # Replace with the actual path to your txt file in the artifact
     
       - name: Extract and Format Test Failures
         id: format-comment
         run: |
           echo "Extracting test failures..."
-      
+
           # Initialize an empty string to store formatted failures
           formatted_comment="### ❌ Test Failures Summary\n"
           
-          # Start processing the log file with awk
-          formatted_comment+=$(awk '
-            # Look for lines starting with "[xUnit.net" that indicate a test failure
+          # Process the log file with awk and format failures
+          awk '
             /^\[xUnit.net.*FAIL\]/ {
-              # Start capturing the failure block
               in_failure_block = 1
               test_name = substr($0, index($0, "]") + 2)
               formatted_failure = "#### Test: " test_name "\n"
             }
             
-            # Capture all lines while we are inside a failure block
             in_failure_block {
-              # Append the line to the formatted failure block
               formatted_failure = formatted_failure $0 "\n"
-              
-              # Check if we have found the second (pos <number>) line
               if ($0 ~ /\(pos [0-9]+\)/) {
                 if (++count == 2) {
                   in_failure_block = 0
-                  # Store the formatted failure block
                   print formatted_failure
                 }
               }
             }
-          ' test_log.txt)
+          ' test_results/test_log.txt > extracted_failures.txt
+
+          # Append the formatted failures to the comment
+          formatted_comment+=$(cat extracted_failures.txt)
           
-          # Output the formatted comment so it can be used in subsequent steps
-          echo "formatted_comment=$formatted_comment" >> $GITHUB_ENV
+          # Output the formatted comment safely
+          echo "formatted_comment<<EOF" >> $GITHUB_ENV
+          echo -e "$formatted_comment" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
       
       - name: Comment on Pull Request
         uses: thollander/actions-comment-pull-request@v1
