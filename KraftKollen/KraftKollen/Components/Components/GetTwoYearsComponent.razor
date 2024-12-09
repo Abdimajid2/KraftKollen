@@ -1,3 +1,4 @@
+
 @code {
     private List<int> years = new List<int> { 2016, 2017, 2018, 2019, 2020, 2021 };
     private int selectedYearOne;
@@ -12,6 +13,9 @@
     }
 }
 <h3>Välj start och slut år</h3>
+=======
+<h3>Select Two Years to Compare</h3>
+
 
 <select @bind="selectedYearOne">
     @foreach (var year in years)
@@ -28,3 +32,21 @@
 </select>
 <p>Du valde: @selectedYearOne till @selectedYearTwo</p>
 <button @onclick="FetchTwoYears">Hämta data</button>
+=======
+<p>You selected: @selectedYearOne and @selectedYearTwo</p>
+<button @onclick="FetchTwoYears">Hämta data</button>
+
+
+@code {
+    private List<int> years = new List<int> { 2016, 2017, 2018, 2019, 2020, 2021 };
+    private int selectedYearOne;
+    private int selectedYearTwo;
+
+    [Parameter]
+    public EventCallback<(int, int)> OnTwoYearsSelected { get; set; }
+
+    private async Task FetchTwoYears()
+    {
+        await OnTwoYearsSelected.InvokeAsync((selectedYearOne, selectedYearTwo));
+    }
+}
