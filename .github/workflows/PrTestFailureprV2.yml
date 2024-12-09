@@ -61,6 +61,34 @@ jobs:
           ls -R
           echo "Checking test_results directory:"
           ls -l test_results || echo "test_results directory does not exist"
+
+      - name: Extract Test Failures from Root
+        run: |
+          if [ -f "test_log.txt" ]; then
+            echo "test_log.txt found in root directory"
+            cat test_log.txt
+            awk '
+              /^\[xUnit.net.*FAIL\]/ {
+                in_failure_block = 1
+                test_name = substr($0, index($0, "]") + 2)
+                formatted_failure = "#### Test: " test_name "\n"
+              }
+              
+              in_failure_block {
+                formatted_failure = formatted_failure $0 "\n"
+                if ($0 ~ /\(pos [0-9]+\)/) {
+                  if (++count == 2) {
+                    in_failure_block = 0
+                    print formatted_failure
+                  }
+                }
+              }
+            ' test_log.txt > extracted_failures.txt
+          else
+            echo "test_log.txt not found in root"
+            exit 1
+          fi
+
           
       - name: Extract and Format Test Failures
         id: format-comment
