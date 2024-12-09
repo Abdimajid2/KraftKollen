@@ -23,9 +23,36 @@ jobs:
         run: |
           mkdir -p test_results
           # Kör tester och skapa logg
-          dotnet test KraftKollen/KraftKollen.Tests/KraftKollen.Tests.csproj --logger "xunit;LogFileName=test_results/results.xml" > test_results/test_log.txt 2>&1 
+          dotnet test KraftKollen/KraftKollen.Tests/KraftKollen.Tests.csproj --logger "xunit;LogFileName=test_results/results.xml" > test_results/test_log.txt 2>&1
           echo "Contents of test_results directory after running tests:"
           ls -l test_results
+
+      - name: Extract and Format Test Failures
+        id: format-comment
+        run: |
+          echo "Extracting test failures..."
+          formatted_comment="### ❌ Test Failures Summary\n"
+          awk '
+            /^\[xUnit.net.*FAIL\]/ {
+              in_failure_block = 1
+              test_name = substr($0, index($0, "]") + 2)
+              formatted_failure = "#### Test: " test_name "\n"
+            }
+            
+            in_failure_block {
+              formatted_failure = formatted_failure $0 "\n"
+              if ($0 ~ /\(pos [0-9]+\)/) {
+                if (++count == 2) {
+                  in_failure_block = 0
+                  print formatted_failure
+                }
+              }
+            }
+          ' test_results/test_log.txt > extracted_failures.txt
+          formatted_comment+=$(cat extracted_failures.txt)
+          echo "formatted_comment<<EOF" >> $GITHUB_ENV
+          echo -e "$formatted_comment" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
@@ -57,33 +84,6 @@ jobs:
             echo "test_log.txt not found"
             exit 1
           fi
-
-      - name: Extract and Format Test Failures
-        id: format-comment
-        run: |
-          echo "Extracting test failures..."
-          formatted_comment="### ❌ Test Failures Summary\n"
-          awk '
-            /^\[xUnit.net.*FAIL\]/ {
-              in_failure_block = 1
-              test_name = substr($0, index($0, "]") + 2)
-              formatted_failure = "#### Test: " test_name "\n"
-            }
-            
-            in_failure_block {
-              formatted_failure = formatted_failure $0 "\n"
-              if ($0 ~ /\(pos [0-9]+\)/) {
-                if (++count == 2) {
-                  in_failure_block = 0
-                  print formatted_failure
-                }
-              }
-            }
-          ' test_log.txt > extracted_failures.txt
-          formatted_comment+=$(cat extracted_failures.txt)
-          echo "formatted_comment<<EOF" >> $GITHUB_ENV
-          echo -e "$formatted_comment" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
 
       - name: Comment on Pull Request
         uses: thollander/actions-comment-pull-request@v1
