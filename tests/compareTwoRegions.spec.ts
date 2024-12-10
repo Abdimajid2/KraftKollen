@@ -13,6 +13,7 @@ test('Ensure arrow is green when second year value is greater than first year', 
   const yearOne = page.getByTestId('year-one')
   await yearOne.waitFor({ state: 'visible' });
 
+  // Workaround bad practice
   // Added timeout because the yearone option was not selected properly. Probably something with the asynchronicity
   await page.waitForTimeout(500);
 
@@ -29,6 +30,10 @@ test('Ensure arrow is green when second year value is greater than first year', 
   // Click the button to trigger the comparison logic
   const button = page.getByTestId('fetch-button');
   await button.click(); 
+
+  // Workaround bad practice
+  // More wait to let the page load the content before access the next element
+  await page.waitForTimeout(500);
 
   // Wait for the specific element to appear
   const locator = page.getByTestId('comparison-symbol');
@@ -56,6 +61,7 @@ test('Ensure arrow is red when first year value is greater than second year', as
   const yearOne = page.getByTestId('year-one')
   await yearOne.waitFor({ state: 'visible' });
 
+  // Workaround bad practice
   // Added timeout because the yearone option was not selected properly. Probably something with the asynchronicity
   await page.waitForTimeout(500);
 
@@ -72,6 +78,10 @@ test('Ensure arrow is red when first year value is greater than second year', as
   // Click the button to trigger the comparison logic
   const button = page.getByTestId('fetch-button');
   await button.click(); 
+
+  // Workaround bad practice
+  // More wait to let the page load the content before access the next element
+  await page.waitForTimeout(500);
 
   // Wait for the specific element to appear
   const locator = page.getByTestId('comparison-symbol');
@@ -100,6 +110,7 @@ test('Ensure equalsign is blue when first year value is equal to second year', a
   const yearOne = page.getByTestId('year-one')
   await yearOne.waitFor({ state: 'visible' });
 
+  // Workaround bad practice
   // Added timeout because the yearone option was not selected properly. Probably something with the asynchronicity
   await page.waitForTimeout(500);
 
@@ -116,6 +127,10 @@ test('Ensure equalsign is blue when first year value is equal to second year', a
   // Click the button to trigger the comparison logic
   const button = page.getByTestId('fetch-button');
   await button.click(); 
+
+  // Workaround bad practice
+  // More wait to let the page load the content before access the next element
+  await page.waitForTimeout(500);
 
   // Wait for the specific element to appear
   const locator = page.getByTestId('comparison-symbol');
