@@ -45,8 +45,12 @@ jobs:
     # Start the app (for Blazor Server or WebAssembly)
     - name: Start Blazor app
       run: |
-        nohup dotnet ./published/KraftKollen.dll &
+        nohup dotnet ./published/KraftKollen.dll > app_output.log 2>&1 &
         sleep 10 # Give the app some time to start
+
+    - name: Check app output to confirm the port
+      run: |
+        tail -n 50 app_output.log  # Display the last 50 lines of the app output to check for the port
       
     - name: Run Playwright tests
       run: npx playwright test
