@@ -23,7 +23,7 @@ namespace KraftKollen.Helpers
 
             if (lastValue > firstValue)
             {
-                return "Trendens stiger!";
+                return "Trenden stiger!";
             }
             else if (lastValue < firstValue)
             {
