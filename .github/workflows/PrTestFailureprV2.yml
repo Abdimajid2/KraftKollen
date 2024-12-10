@@ -73,11 +73,12 @@ jobs:
             in_failure_block {
               formatted_failure = formatted_failure $0 "\n"
               if ($0 ~ /Actual:/) {
-                in_failure_block = 0
                 print formatted_failure
+                in_failure_block = 0
               }
             }
           ' test_log.txt > extracted_failures.txt
+
 
 
           formatted_comment+=$(cat extracted_failures.txt)
