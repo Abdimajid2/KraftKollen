@@ -7,7 +7,7 @@ test('Ensure arrow is green when second year value is greater than first year', 
   
 
   // Navigate to the page and wait for it to load completely
-  await page.goto('http://localhost:5057/CompareTwoRegionsOutputView', { waitUntil: 'load', timeout: 10000 });  // 60s timeout
+  await page.goto('http://localhost:5000/CompareTwoRegionsOutputView', { waitUntil: 'load', timeout: 10000 });  // 60s timeout
 
   // Wait for the select element to be visible
   const yearOne = page.getByTestId('year-one')
@@ -50,7 +50,7 @@ test('Ensure arrow is red when first year value is greater than second year', as
   
 
   // Navigate to the page and wait for it to load completely
-  await page.goto('http://localhost:5057/CompareTwoRegionsOutputView', { waitUntil: 'load', timeout: 10000 });  // 60s timeout
+  await page.goto('http://localhost:5000/CompareTwoRegionsOutputView', { waitUntil: 'load', timeout: 10000 });  // 60s timeout
 
   // Wait for the select element to be visible
   const yearOne = page.getByTestId('year-one')
@@ -94,7 +94,7 @@ test('Ensure equalsign is blue when first year value is equal to second year', a
   
 
   // Navigate to the page and wait for it to load completely
-  await page.goto('http://localhost:5057/CompareTwoRegionsOutputView', { waitUntil: 'load', timeout: 10000 });  // 60s timeout
+  await page.goto('http://localhost:5000/CompareTwoRegionsOutputView', { waitUntil: 'load', timeout: 10000 });  // 60s timeout
 
   // Wait for the select element to be visible
   const yearOne = page.getByTestId('year-one')
