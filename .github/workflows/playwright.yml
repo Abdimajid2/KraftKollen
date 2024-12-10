@@ -8,13 +8,6 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    services:
-      # Start Blazor app using the .NET image and expose the required port
-      web:
-        image: mcr.microsoft.com/dotnet/aspnet:8.0
-        ports:
-          - 5057:80
-        options: --health-cmd="curl --fail http://localhost:80/health" --health-interval=10s --health-timeout=5s --health-retries=3
         
     steps:
     - uses: actions/checkout@v4
@@ -29,21 +22,28 @@ jobs:
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
 
-    - name: Restore and Build Blazor App
-      run: |
-        # Install .NET SDK
-        curl -sSL https://aka.ms/getdotnet | bash
-        dotnet --version
-        
-        # Restore and build Blazor app
-        dotnet restore
-        dotnet build
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0' 
 
-    - name: Run Blazor app
+    # Restore dependencies
+    - name: Restore dependencies
+      run: dotnet restore
+
+    # Build the Blazor app
+    - name: Build the app
+      run: dotnet build --configuration Release
+
+      # Publish the app (for Blazor WebAssembly or Server App)
+    - name: Publish the app
+      run: dotnet publish --configuration Release --output ./published
+
+    # Start the app (for Blazor Server or WebAssembly)
+    - name: Start Blazor app
       run: |
-        dotnet run --urls http://0.0.0.0:5057 &  # Run the Blazor app on port 5057
-        # Wait for the app to start up
-        sleep 10  # Adjust this sleep time if necessary, or check for health
+        nohup dotnet ./published/YourBlazorApp.dll &
+        sleep 10 # Give the app some time to start
       
     - name: Run Playwright tests
       run: npx playwright test
