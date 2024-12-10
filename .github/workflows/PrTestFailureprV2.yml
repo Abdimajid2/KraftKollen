@@ -33,10 +33,10 @@ jobs:
           name: test-results
           path: test_results
 
-      - name: Fail the Job if Tests Failed
+      - name: Set Test Status
         if: always() && steps.run-tests.outcome == 'failure'
         run: |
-          echo "Tests failed. Marking this step as failed."
+          echo "Test failures detected."
           exit 1
 
   add-comment-to-pr:
