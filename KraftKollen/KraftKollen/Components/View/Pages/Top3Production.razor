@@ -60,8 +60,8 @@
 
 @code {
     private List<Region> regions = AllRegions.GetAllRegions();
-    private string selectedRegionId = "0001"; // Default till Stockholm
-    private List<int> availableYears = Enumerable.Range(2000, DateTime.Now.Year - 1999).ToList();
+    private string selectedRegionId = "0021"; // Default to Gävleborg
+    private List<int> availableYears = Enumerable.Range(2012, DateTime.Now.Year - 2011).ToList();
     private int startYear = 2012;
     private int endYear = 2023;
     private List<(int Year, double Production)> topYears = new();
