@@ -27,6 +27,7 @@ jobs:
           echo "Contents of test_results directory after running tests:"
           ls -l test_results
       - name: Upload Test Results
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: test-results
