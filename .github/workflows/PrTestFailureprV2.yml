@@ -77,8 +77,13 @@ jobs:
                 in_failure_block = 0
               }
             }
+          
+            END {
+              if (in_failure_block) {
+                print formatted_failure
+              }
+            }
           ' test_log.txt > extracted_failures.txt
-
 
 
           formatted_comment+=$(cat extracted_failures.txt)
