@@ -73,13 +73,12 @@ jobs:
             in_failure_block {
               formatted_failure = formatted_failure $0 "\n"
               if ($0 ~ /\(pos [0-9]+\)/) {
-                if (++count == 2) {
-                  in_failure_block = 0
-                  print formatted_failure
-                }
+                in_failure_block = 0
+                print formatted_failure
               }
             }
           ' test_log.txt > extracted_failures.txt
+
           formatted_comment+=$(cat extracted_failures.txt)
           echo "formatted_comment<<EOF" >> $GITHUB_ENV
           echo -e "$formatted_comment" >> $GITHUB_ENV
