@@ -1,0 +1,53 @@
+name: Comment Test Results on PR
+
+on:
+  workflow_run:
+    workflows: ["Run Tests and Set Status"]
+    types:
+      - completed
+
+jobs:
+  comment-on-pr:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: test-results
+
+      - name: Extract and Format Test Failures
+        id: format-comment
+        run: |
+          echo "Extracting test failures..."
+          formatted_comment="### ❌ Test Failures Summary\n"
+          awk '
+            /^\[xUnit.net.*FAIL\]/ {
+              in_failure_block = 1
+              test_name = substr($0, index($0, "]") + 2)
+              formatted_failure = "#### Test: " test_name "\n"
+            }
+            
+            in_failure_block {
+              formatted_failure = formatted_failure $0 "\n"
+              if ($0 ~ /\(pos [0-9]+\)/) {
+                if (++count == 2) {
+                  in_failure_block = 0
+                  print formatted_failure
+                }
+              }
+            }
+          ' test_results/test_log.txt > extracted_failures.txt
+          formatted_comment+=$(cat extracted_failures.txt)
+          echo "formatted_comment<<EOF" >> $GITHUB_ENV
+          echo -e "$formatted_comment" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Comment on Pull Request
+        uses: thollander/actions-comment-pull-request@v3
+        with:
+          message: ${{ env.formatted_comment }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
