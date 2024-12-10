@@ -32,20 +32,20 @@ jobs:
 
     # Restore dependencies
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore ./KraftKollen/KraftKollen/KraftKollen.csproj
 
     # Build the Blazor app
     - name: Build the app
-      run: dotnet build --configuration Release
+      run: dotnet build ./KraftKollen/KraftKollen/KraftKollen.csproj --configuration Release
 
       # Publish the app (for Blazor WebAssembly or Server App)
     - name: Publish the app
-      run: dotnet publish --configuration Release --output ./published
+      run: dotnet publish ./KraftKollen/KraftKollen/KraftKollen.csproj --configuration Release --output ./published
 
     # Start the app (for Blazor Server or WebAssembly)
     - name: Start Blazor app
       run: |
-        nohup dotnet ./published/YourBlazorApp.dll &
+        nohup dotnet ./published/KraftKollen.dll &
         sleep 10 # Give the app some time to start
       
     - name: Run Playwright tests
