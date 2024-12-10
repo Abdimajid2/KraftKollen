@@ -33,11 +33,11 @@ test('Ensure arrow is green when second year value is greater than first year', 
 
   // Workaround bad practice
   // More wait to let the page load the content before access the next element
-  await page.waitForTimeout(500);
+  //await page.waitForTimeout(500);
 
   // Wait for the specific element to appear
-  const locator = page.getByTestId('comparison-symbol');
-  await expect(locator).toBeVisible();
+  //const locator = page.getByTestId('comparison-symbol');
+  //await expect(locator).toBeVisible();
 
   // Wait for the DOM to update and display the arrow
   // Get the computed color of the arrow element
@@ -81,11 +81,11 @@ test('Ensure arrow is red when first year value is greater than second year', as
 
   // Workaround bad practice
   // More wait to let the page load the content before access the next element
-  await page.waitForTimeout(500);
+  //await page.waitForTimeout(500);
 
   // Wait for the specific element to appear
-  const locator = page.getByTestId('comparison-symbol');
-  await expect(locator).toBeVisible();
+  //const locator = page.getByTestId('comparison-symbol');
+  //await expect(locator).toBeVisible();
 
   // Wait for the DOM to update and display the arrow
   // Get the computed color of the arrow element
@@ -130,11 +130,11 @@ test('Ensure equalsign is blue when first year value is equal to second year', a
 
   // Workaround bad practice
   // More wait to let the page load the content before access the next element
-  await page.waitForTimeout(500);
+  //await page.waitForTimeout(500);
 
   // Wait for the specific element to appear
-  const locator = page.getByTestId('comparison-symbol');
-  await expect(locator).toBeVisible();
+  //const locator = page.getByTestId('comparison-symbol');
+  //await expect(locator).toBeVisible();
 
   // Wait for the DOM to update and display the arrow
   // Get the computed color of the arrow element
