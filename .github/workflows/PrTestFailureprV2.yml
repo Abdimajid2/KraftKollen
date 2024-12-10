@@ -9,46 +9,35 @@ on:
 jobs:
   test-and-report:
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup .NET
+      - name: Setup .NET 
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0'
 
       - name: Run Tests and Generate xUnit Results
-        id: run-tests
         run: |
           mkdir -p test_results
-          dotnet test KraftKollen/KraftKollen.Tests/KraftKollen.Tests.csproj --logger "xunit;LogFileName=test_results/results.xml" > test_results/test_log.txt 2>&1
-        continue-on-error: true
-
+          # Kör tester och skapa logg
+          dotnet test KraftKollen/KraftKollen.Tests/KraftKollen.Tests.csproj --logger "xunit;LogFileName=test_results/results.xml" > test_results/test_log.txt 2>&1 || true
+          echo "Contents of test_results directory after running tests:"
+          ls -l test_results
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
         with:
           name: test-results
           path: test_results
 
-      - name: Check Test Status
-        id: check-status
-        run: |
-          if [ "${{ steps.run-tests.outcome }}" == "failure" ]; then
-            echo "Test failures detected."
-            echo "has_failures=true" >> $GITHUB_ENV
-          else
-            echo "All tests passed."
-            echo "has_failures=false" >> $GITHUB_ENV
-          fi
-
   add-comment-to-pr:
     runs-on: ubuntu-latest
     needs: test-and-report
     permissions:
-      pull-requests: write
-      contents: read
+      pull-requests: write  # Behörighet att skriva kommentarer till PR
+      contents: read        # Behörighet att läsa innehåll i repot
 
     steps:
       - name: Download Artifact
@@ -60,13 +49,13 @@ jobs:
         run: |
           echo "Listing all files after artifact download:"
           ls -R
-          if [ -f "test_results/test_log.txt" ]; then
+          echo "Checking for test_log.txt in root directory:"
+          if [ -f "test_log.txt" ]; then
             echo "test_log.txt found"
           else
             echo "test_log.txt not found"
             exit 1
           fi
-
       - name: Extract and Format Test Failures
         id: format-comment
         run: |
@@ -88,15 +77,13 @@ jobs:
                 }
               }
             }
-          ' test_results/test_log.txt > extracted_failures.txt
+          ' test_log.txt > extracted_failures.txt
           formatted_comment+=$(cat extracted_failures.txt)
           echo "formatted_comment<<EOF" >> $GITHUB_ENV
           echo -e "$formatted_comment" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
-
       - name: Comment on Pull Request
-        if: always() && env.has_failures == 'true'
-        uses: thollander/actions-comment-pull-request@v3
+        uses: thollander/actions-comment-pull-request@v1
         with:
           message: ${{ env.formatted_comment }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
