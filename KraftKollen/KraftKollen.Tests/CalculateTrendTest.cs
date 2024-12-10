@@ -22,7 +22,7 @@ namespace KraftKollen.Tests
         }
 
         [Fact]
-        public void CalculateTrend_WithLessThanTwoDataPoints_ReturnsError()
+        public void CalculateTrend_WithLessThanTwoDataPoints_ReturnsError() // Testfall som kontrollerar att metoden returnerar felmeddelande om det finns mindre än 2 datapunkter
         {
 
             // Act
@@ -34,7 +34,7 @@ namespace KraftKollen.Tests
         }
 
         [Fact]
-        public void CalculateTrend_WithIncreasingValues_ReturnUpwardTrend()
+        public void CalculateTrend_WithIncreasingValues_ReturnUpwardTrend() //Testfall som kontrollerar att metoden returnerar "Trenden stiger!" om värdena ökar
         {
 
 
@@ -46,7 +46,7 @@ namespace KraftKollen.Tests
         }
 
         [Fact]
-        public void CalculateTrend_WithDecreasingValues_ReturnDownwardTrend()
+        public void CalculateTrend_WithDecreasingValues_ReturnDownwardTrend() // Testfall som kontrollerar att metoden returnerar "Trenden sjunker!" om värdena minskar
         {
 
 
@@ -58,7 +58,7 @@ namespace KraftKollen.Tests
         }
 
         [Fact]
-        public void CalculateTrend_WithUnchangedValues_ReturnsNoChangeTrend()
+        public void CalculateTrend_WithUnchangedValues_ReturnsNoChangeTrend() // Testfall som kontrollerar att metoden returnerar "Trenden orubbad!" om värdena är oförändrade
         {
 
 
