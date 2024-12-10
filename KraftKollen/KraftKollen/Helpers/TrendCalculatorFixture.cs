@@ -4,11 +4,11 @@ using System.Globalization;
 
 namespace KraftKollen.Helpers
 {
-    public class TrendCalculatorFixture
+    public class TrendCalculatorFixture // Fixture för att testa TrendCalculator.
     {
         public TrendCalculator TrendCalculator { get; set; }
         public List<WindPowerProduction> IncreasingTrendData { get; set; }
-        public List<WindPowerProduction> DecreasingTrendData { get; set; }
+        public List<WindPowerProduction> DecreasingTrendData { get; set; } // Testdata för att testa olika trender.
         public List<WindPowerProduction> UnchangedTrendData { get; set; }
         public List<WindPowerProduction> InsufficientTrendData { get; set; }
 
