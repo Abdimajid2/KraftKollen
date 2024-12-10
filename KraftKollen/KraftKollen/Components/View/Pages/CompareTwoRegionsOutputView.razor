@@ -25,27 +25,30 @@
     }
 
     @* TODO: These are not null since they are initialized as new() *@
+    
     @if (_firstYearLargestValue != null && _secondYearLargestValue != null)
     {
+        
         // Returns a string depending on if any value is greater than the other
         var arrow = yearComparisonIndicator.GetYearComparisonIndicator(_firstYearLargestValue.Value, _secondYearLargestValue.Value);
-
-        switch (arrow)
+        <div data-testid="comparison-symbol">
+        @switch (arrow)
         {
             case "Left":
-                <h3 class="alert-danger"> &larr; </h3>
+                <h3 data-testid="left-arrow" class="alert-danger"> &larr; </h3>
                 break;
 
             case "Equal":
-                <h3 class="alert-info"> &equals; </h3>
+                <h3 data-testid="equal" class="alert-info"> &equals; </h3>
                 break;
             case "Right":
-                <h3 class="alert-success"> &rarr; </h3>
+                <h3 data-testid="right-arrow" class="alert-success"> &rarr; </h3>
                 break;
             default:
                 <h3> Could not validate data </h3>
                 break;
         }
+        </div>
     }
 
     @if (_secondYearLargestValue?.Value != null)

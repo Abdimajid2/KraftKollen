@@ -1,20 +1,20 @@
 <h3>Select Two Years to Compare</h3>
 
-<select @bind="selectedYearOne">
+<select data-testid="year-one" @bind="selectedYearOne">
     @foreach (var year in years)
     {
         <option value="@year">@year</option>
     }
 </select>
 
-<select @bind="selectedYearTwo">
+<select data-testid="year-two" @bind="selectedYearTwo">
     @foreach (var year in years)
     {
         <option value="@year">@year</option>
     }
 </select>
 <p>You selected: @selectedYearOne and @selectedYearTwo</p>
-<button @onclick="FetchTwoYears">Hämta data</button>
+<button data-testid="fetch-button" @onclick="FetchTwoYears">Hämta data</button>
 
 
 @code {
