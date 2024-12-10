@@ -33,11 +33,15 @@ jobs:
           name: test-results
           path: test_results
 
-      - name: Set Test Status
-        if: always() && steps.run-tests.outcome == 'failure'
+      - name: Check Test Status
+        id: check-status
         run: |
-          echo "Test failures detected."
-          exit 1
+          if [ "${{ steps.run-tests.outcome }}" == "failure" ]; then
+            echo "Test failures detected."
+            echo "has_failures=true" >> $GITHUB_ENV
+          else
+            echo "All tests passed."
+            echo "has_failures=false" >> $GITHUB_ENV
 
   add-comment-to-pr:
     runs-on: ubuntu-latest
@@ -92,6 +96,7 @@ jobs:
           echo "EOF" >> $GITHUB_ENV
 
       - name: Comment on Pull Request
+        if: env.has_failures == 'true'
         uses: thollander/actions-comment-pull-request@v3
         with:
           message: ${{ env.formatted_comment }}
