@@ -1,0 +1,44 @@
+﻿.centered-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+    background-image: url('/images/field-with-windmills.jpg');
+    background-size: cover;
+    background-position: center;
+    /*  padding-top: 20px; */
+    /* box-sizing: border-box; */
+    color: white
+}
+
+.custom-button {
+    background-color: white;
+    color: seagreen;
+    border: 1px solid black;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.text-box {
+    background-color: rgba(46, 139, 87, 0.6); /* Seagreen + transparens */
+    padding: 20px;
+    border-radius: 10px;
+    position: absolute; /* The box should be in front of the background imag */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Adjusts so that the box is exactly centered */
+    /* max-width: 100%; */ /* Maximum 90% of screen width */
+    /* min-width: 300px; */ /* Minimum width */
+    word-wrap: break-word; /* Make the text break if it is too long */
+}
+
+h3 {
+    font-weight: bold;
+}
+
+p {
+    font-weight: bold;
