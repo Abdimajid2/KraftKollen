@@ -6,30 +6,37 @@
 @inject IApiService apiService
 @inject ITopProduction productionAnalyzer
 
-<h3>Topp 3 Produktionsår för Vindkraft</h3>
+<link href="custom.css" rel="stylesheet" />
 
-<div>
-    <label for="region">Välj region:</label>
-    <select id="region" @bind="selectedRegionId">
-        @foreach (var region in regions)
-        {
-            <option value="@region.Id">@region.Name</option>
-        }
-    </select>
+<div class="centered-content">
+    <div class="text-box">
+        <h3>Topp 3 Produktionsår för Vindkraft</h3>
 
-    <label for="yearRange">Välj år:</label>
-    <select id="startYear" @bind="startYear">
-        @foreach (var year in availableYears)
-        {
-            <option value="@year">@year</option>
-        }
-    </select>
-    <select id="endYear" @bind="endYear">
-        @foreach (var year in availableYears.Where(year => year >= startYear))
-        {
-            <option value="@year">@year</option>
-        }
-    </select>
+        <div>
+            <label for="region">Välj region:</label>
+            <select id="region" @bind="selectedRegionId">
+                @foreach (var region in regions)
+                {
+                    <option value="@region.Id">@region.Name</option>
+                }
+            </select>
+        </div>
+
+        <div>
+            <label for="yearRange">Välj år:</label>
+            <div class="year-range">
+                <select id="startYear" @bind="startYear">
+                    @foreach (var year in availableYears)
+                    {
+                        <option value="@year">@year</option>
+                    }
+                </select>
+                <select id="endYear" @bind="endYear">
+                    @foreach (var year in availableYears.Where(year => year >= startYear))
+                    {
+                        <option value="@year">@year</option>
+                    }
+                </select>
             </div>
         </div>
 
@@ -38,24 +45,25 @@
             <p class="error-message">Startår och slutår kan inte vara samma!</p>
         }
 
-    <button @onclick="LoadTopProductionYears">Hämta Topp 3</button>
-</div>
+        <button class="custom-button" @onclick="LoadTopProductionYears">Hämta Topp 3</button>
 
-<div>
-    @if (topYears != null && topYears.Any())
-    {
-        <h4>De tre år med högst produktion:</h4>
-        <ol>
-            @foreach (var year in topYears)
-            {
-                <li>År: @year.Year, Produktion: @year.Production Mw/h</li>
-            }
-        </ol>
-    }
+        @if (topYears != null && topYears.Any())
+        {
+            <div>
+                <h4>De tre år med högst produktion:</h4>
+                <ol>
+                    @foreach (var year in topYears)
+                    {
+                        <li>År: @year.Year, Produktion: @year.Production Mw/h</li>
+                    }
+                </ol>
+            </div>
+        }
         else if (topYears != null)
-    {
-        <p>Ingen data att visa</p>
-    }
+        {
+            <p>Ingen data att visa</p>
+        }
+    </div>
 </div>
 
 @code {
@@ -99,6 +107,5 @@
         {
             Console.WriteLine($"Error: {ex.Message}");
         }
-       
     }
 }
