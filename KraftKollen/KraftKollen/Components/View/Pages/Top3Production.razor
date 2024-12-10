@@ -30,6 +30,13 @@
             <option value="@year">@year</option>
         }
     </select>
+            </div>
+        </div>
+
+        @if (startYear == endYear)
+        {
+            <p class="error-message">Startår och slutår kan inte vara samma!</p>
+        }
 
     <button @onclick="LoadTopProductionYears">Hämta Topp 3</button>
 </div>
@@ -45,7 +52,7 @@
             }
         </ol>
     }
-    else
+        else if (topYears != null)
     {
         <p>Ingen data att visa</p>
     }
@@ -61,6 +68,13 @@
 
     private async Task LoadTopProductionYears()
     {
+        // Check if startYear and endYear are the same
+        if (startYear == endYear)
+        {
+            Console.WriteLine("Startår och slutår kan inte vara samma.");
+            return;
+        }
+
         topYears.Clear();
 
         try
