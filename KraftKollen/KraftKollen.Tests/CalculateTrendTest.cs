@@ -42,7 +42,7 @@ namespace KraftKollen.Tests
             var result = _fixture.TrendCalculator.CalculateTrend(_fixture.IncreasingTrendData);
 
             // Assert
-            Assert.Equal("Trenden stiger!", result);
+            Assert.Equal("Trendens stiger!", result);
         }
 
         [Fact]
@@ -54,7 +54,7 @@ namespace KraftKollen.Tests
             var result = _fixture.TrendCalculator.CalculateTrend(_fixture.DecreasingTrendData);
 
             // Assert
-            Assert.Equal("Trenden sjunker!", result);
+            Assert.Equal("Trendens sjunker!", result);
         }
 
         [Fact]
