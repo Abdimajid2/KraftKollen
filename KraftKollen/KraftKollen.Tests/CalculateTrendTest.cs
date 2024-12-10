@@ -30,7 +30,7 @@ namespace KraftKollen.Tests
 
            _output.WriteLine(CultureInfo.DefaultThreadCurrentCulture.DisplayName);
             // Assert
-            Assert.Equal("Kan ej hitta trend.", result);
+            Assert.Equal("Kans ej hitta trend.", result);
         }
 
         [Fact]
@@ -42,7 +42,7 @@ namespace KraftKollen.Tests
             var result = _fixture.TrendCalculator.CalculateTrend(_fixture.IncreasingTrendData);
 
             // Assert
-            Assert.Equal("Trenden stiger!", result);
+            Assert.Equal("Trendens stiger!", result);
         }
 
         [Fact]
@@ -54,7 +54,7 @@ namespace KraftKollen.Tests
             var result = _fixture.TrendCalculator.CalculateTrend(_fixture.DecreasingTrendData);
 
             // Assert
-            Assert.Equal("Trenden sjunker!", result);
+            Assert.Equal("Trendens sjunker!", result);
         }
 
         [Fact]
@@ -66,7 +66,7 @@ namespace KraftKollen.Tests
             var result = _fixture.TrendCalculator.CalculateTrend(_fixture.UnchangedTrendData);
 
             // Assert
-            Assert.Equal("Trenden orubbad!", result);
+            Assert.Equal("Trendens orubbad!", result);
         }
     }
 }
