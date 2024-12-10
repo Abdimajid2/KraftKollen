@@ -16,15 +16,15 @@ namespace KraftKollen.Tests
         }
 
         [Fact]
-        public void GetTopProductionYears_WithSufficientData_ReturnsTopThreeYears() // Returnerar top 3 åren med högst produktion
+        public void GetTopProductionYears_WithSufficientData_ReturnsTopThreeYears() // Returns top three years with production data
         {
             // Act
             var result = _fixture.ProductionAnalyzer.GetTopProductionYears(_fixture.SampleProductionData);
 
             // Assert
-            Assert.Equal(3, result.Count);  //Kontrollera att det finns 3 resultat i listan
-            Assert.Equal(2021, result[0].Year); //Kontrollera att det första året i listan är 2021
-            Assert.Equal(600.0, result[0].Production); //Kontrollera att produktionen för det första året är 600
+            Assert.Equal(3, result.Count);  // Checks that there are 3 results in the list
+            Assert.Equal(2021, result[0].Year); // Checks that the first year in the list is 2021
+            Assert.Equal(600.0, result[0].Production);  // Checks that the production for the first year is 600
             Assert.Equal(2022, result[1].Year);
             Assert.Equal(550.0, result[1].Production);
             Assert.Equal(2020, result[2].Year);
@@ -32,7 +32,7 @@ namespace KraftKollen.Tests
         }
 
         [Fact]
-        public void GetTopProductionYears_WithInsufficientData_ReturnsEmptyList() // Returnerar tom lista om det inte finns tillräckligt med data(mindre än 3 år med produktionsdata)
+        public void GetTopProductionYears_WithInsufficientData_ReturnsEmptyList() // Returns empty list if there is not enough data (less than 3 years with production data)
         {
             // Act
             var result = _fixture.ProductionAnalyzer.GetTopProductionYears(_fixture.InsufficientProductionData); 
@@ -42,7 +42,8 @@ namespace KraftKollen.Tests
         }
 
         [Fact]
-        public void GetTopProductionYears_WithEmptyData_ReturnsEmptyList() // Returnerar tom lista om det inte finns tillräckligt med data
+        public void GetTopProductionYears_WithEmptyData_ReturnsEmptyList()  // Returns empty list if there is no data
+     
         {
             // Arrange
             var emptyData = new List<WindPowerProduction>();

@@ -2,7 +2,7 @@
 
 namespace KraftKollen.Helpers.Interfaces
 {
-    public interface ITrendCalculator  // Interface för att beräkna trend. 
+    public interface ITrendCalculator  // Interface to calculate trend.
     {
         string CalculateTrend(List<WindPowerProduction> data);
     }
