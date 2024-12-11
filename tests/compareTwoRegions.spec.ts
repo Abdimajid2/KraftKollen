@@ -48,7 +48,7 @@ test('Ensure arrow is green when second year value is greater than first year', 
   const color = await arrowElement?.evaluate((el) => window.getComputedStyle(el).color);
 
   // Verify that the color matches the expected Bootstrap green
-  expect(color).toBe('rgb(15, 81, 50)'); // Expected green color
+  await expect(color).toBe('rgb(15, 81, 50)'); // Expected green color
 });
 
 test('Ensure arrow is red when first year value is greater than second year', async ({ page }) => {
@@ -96,7 +96,7 @@ test('Ensure arrow is red when first year value is greater than second year', as
   const color = await arrowElement?.evaluate((el) => window.getComputedStyle(el).color);
 
   // Verify that the color matches the expected Bootstrap green
-  expect(color).toBe('rgb(132, 32, 41)'); // Expected green color
+  await expect(color).toBe('rgb(132, 32, 41)'); // Expected green color
 });
 
 
@@ -145,7 +145,7 @@ test('Ensure equalsign is blue when first year value is equal to second year', a
   const color = await arrowElement?.evaluate((el) => window.getComputedStyle(el).color);
 
   // Verify that the color matches the expected Bootstrap green
-  expect(color).toBe('rgb(5, 81, 96)'); // Expected green color
+  await expect(color).toBe('rgb(5, 81, 96)'); // Expected green color
 });
 
 test('test to see if it will find the elements', async ({ page }) => {
@@ -189,6 +189,6 @@ test('test to see if it will find the elements', async ({ page }) => {
   const arrowElement = page.getByTestId('equal');
   await arrowElement.waitFor({ state: 'visible' });
 
-  expect(arrowElement).toBeVisible
+  await expect(arrowElement).toBeVisible
   
 });
