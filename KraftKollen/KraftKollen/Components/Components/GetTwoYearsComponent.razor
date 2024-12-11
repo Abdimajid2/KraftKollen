@@ -1,4 +1,5 @@
-<h3>Välj mellan två år</h3>
+
+<link href="custom.css" rel="stylesheet" />
 
 <select @bind="selectedYearOne">
     @foreach (var year in years)
@@ -13,8 +14,10 @@
         <option value="@year">@year</option>
     }
 </select>
-<p>Du valde: @selectedYearOne och @selectedYearTwo</p>
-<button @onclick="FetchTwoYears">Hämta data</button>
+
+<p>Valda år: @selectedYearOne och @selectedYearTwo</p>
+<button class="custom-button" @onclick="FetchTwoYears">Hämta data</button>
+
 
 
 @code {

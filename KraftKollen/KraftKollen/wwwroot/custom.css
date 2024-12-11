@@ -7,6 +7,8 @@
     background-image: url('/images/field-with-windmills.jpg');
     background-size: cover;
     background-position: center;
+    padding: 0px;
+    margin: 0px;
     /*  padding-top: 20px; */
     /* box-sizing: border-box; */
     color: white
@@ -35,6 +37,24 @@
     /* min-width: 300px; */ /* Minimum width */
     word-wrap: break-word; /* Make the text break if it is too long */
 }
+
+.comparison-symbol{
+    background: none;
+    padding-top: 1em;
+    font-size: xx-large;
+}
+
+.result {
+    display: flex;
+    gap: 16px; /* Adds space between the divs */
+    margin-top: 40px;
+}
+
+    .result > div {
+        border: 1px solid #ccc; /* Optional: Add a border for visual distinction */
+        padding: 8px;
+        flex: 1; /* Optional: Make the divs equal in width */  
+    }
 
 h3 {
     font-weight: bold;

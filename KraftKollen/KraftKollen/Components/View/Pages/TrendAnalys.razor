@@ -7,57 +7,67 @@
 @inject IApiService apiService
 @inject ITrendCalculator trendCalculator
 
-<h3>Trendanalys för Vindkraft</h3>
+<link href="custom.css" rel="stylesheet" />
 
-<div>
-    <label for="region">Välj region:</label>
-    <select id="region" @bind="selectedRegionId">
-        @foreach (var region in regions)
-        {
-            <option value="@region.Id">@region.Name</option>
-        }
-    </select>
+<div class="centered-content">
+    <div class="text-box">
+        <h3>Trendanalys för Vindkraft</h3>
 
-    <label for="yearRange">Välj år:</label>
-    <select id="startYear" @bind="startYear">
-        @foreach (var year in availableYears)
-        {
-            <option value="@year">@year</option>
-        }
-    </select>
-    <select id="endYear" @bind="endYear">
-        @foreach (var year in availableYears.Where(year => year >= startYear))
-        {
-            <option value="@year">@year</option>
-        }
-    </select>
+        <div>
+            <label for="region">Välj region:</label>
+            <select id="region" @bind="selectedRegionId">
+                @foreach (var region in regions)
+                {
+                    <option value="@region.Id">@region.Name</option>
+                }
+            </select>
+        </div>
 
-    <button @onclick="LoadData">Ladda Data</button>
+        <div>
+            <label for="yearRange">Välj år:</label>
+            <div class="year-range">
+                <select id="startYear" @bind="startYear">
+                    @foreach (var year in availableYears)
+                    {
+                        <option value="@year">@year</option>
+                    }
+                </select>
+                <select id="endYear" @bind="endYear">
+                    @foreach (var year in availableYears.Where(year => year >= startYear))
+                    {
+                        <option value="@year">@year</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <button class="custom-button" @onclick="LoadData">Ladda Data</button>
+
+        @if (trendData != null)
+        {
+            <div>
+                <h4> @(trendResult)</h4>
+                <ul>
+                    @foreach (var value in trendData)
+                    {
+                        <li>År: @value.Period, Värde: @string.Join(", ", value.Value) Mw/h</li>
+                    }
+                </ul>
+            </div>
+        }
+        else
+        {
+            <p>Ingen data att visa</p>
+        }
+    </div>
 </div>
 
-<div>
-    @if (trendData != null)
-    {
-        <h4>Trend: @(trendResult)</h4>
-        <ul>
-            @foreach (var value in trendData)
-            {
-                <li>År: @value.Period, Värde: @string.Join(", ", value.Value) Mw/h</li>
-
-            }
-        </ul>
-    }
-    else
-    {
-        <p>Ingen data att visa</p>
-    }
-</div>
 
 @code {
     private List<Region> regions = AllRegions.GetAllRegions();
-    private string selectedRegionId = "0001"; // Default till Stockholm
-    private List<int> availableYears = Enumerable.Range(2000, DateTime.Now.Year - 1999).ToList();
-    private int startYear = 2020;
+    private string selectedRegionId = "0021"; // Default to Gävleborg
+    private List<int> availableYears = Enumerable.Range(2012, DateTime.Now.Year - 2012).ToList();
+    private int startYear = 2012;
     private int endYear = 2023;
     private List<WindPowerProduction> trendData = new List<WindPowerProduction>();
     private string trendResult;
@@ -66,7 +76,8 @@
     {
         trendData.Clear();
 
-        if(startYear == endYear)
+        // Check if the start and end years are the same, which is invalid
+        if (startYear == endYear)
         {
             trendResult = "Startyear och endyear kan inte vara samma, kan inte hitta trend.";
             return;
@@ -85,14 +96,14 @@
 
             }
 
-            // Kontrollera om vi fick någon data
+            // Check to see if we got any data
             if (trendData.Any())
             {
                 trendResult = trendCalculator.CalculateTrend(trendData);
             }
             else
             {
-                trendResult = "No data found.";
+                trendResult = "Ingen data hittades.";
             }
         }
         catch (Exception ex)
