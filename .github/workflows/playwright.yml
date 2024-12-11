@@ -53,10 +53,22 @@ jobs:
         nohup dotnet ./published/KraftKollen.dll > app_output.log 2>&1 &
         sleep 10 # Give the app some time to start
 
+    - name: Wait for the app to start
+      run: |
+        for i in {1..10}; do
+          if curl -s http://localhost:5000/ | grep -q 'page'; then
+            echo "App is up!"
+            break
+          fi
+          echo "Waiting for app to start..."
+          sleep 3
+        done
+
     - name: Check app output to confirm the port
       run: |
         tail -n 50 app_output.log  # Display the last 50 lines of the app output to check for the port
-      
+
+
     - name: Run Playwright tests
       run: npx playwright test
     - uses: actions/upload-artifact@v4
