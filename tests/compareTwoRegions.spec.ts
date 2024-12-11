@@ -147,3 +147,48 @@ test('Ensure equalsign is blue when first year value is equal to second year', a
   // Verify that the color matches the expected Bootstrap green
   expect(color).toBe('rgb(5, 81, 96)'); // Expected green color
 });
+
+test('test to see if it will find the elements', async ({ page }) => {
+  
+
+  // Navigate to the page and wait for it to load completely
+  await page.goto('http://localhost:5000/CompareTwoRegionsOutputView', { waitUntil: 'load', timeout: 10000 });  // 60s timeout
+
+  // Wait for the select element to be visible
+  const yearOne = page.getByTestId('year-one')
+  await yearOne.waitFor({ state: 'visible' });
+
+  // Workaround bad practice
+  // Added timeout because the yearone option was not selected properly. Probably something with the asynchronicity
+  await page.waitForTimeout(500);
+
+  // Simulate the year selection
+  await yearOne.selectOption('2017')
+
+  // // Wait for the select elements to be visible and interactable
+  const yearTwo = page.getByTestId('year-two')
+  await yearTwo.waitFor({ state: 'visible' });
+
+  // Simulate the year selection
+  await yearTwo.selectOption('2017')
+
+  // Click the button to trigger the comparison logic
+  const button = page.getByTestId('fetch-button');
+  await button.click(); 
+
+  // Workaround bad practice
+  // More wait to let the page load the content before access the next element
+  //await page.waitForTimeout(500);
+
+  // Wait for the specific element to appear
+  //const locator = page.getByTestId('comparison-symbol');
+  //await expect(locator).toBeVisible();
+
+  // Wait for the DOM to update and display the arrow
+  // Get the computed color of the arrow element
+  const arrowElement = page.getByTestId('equal');
+  await arrowElement.waitFor({ state: 'visible' });
+
+  expect(arrowElement).toBeVisible
+  
+});
