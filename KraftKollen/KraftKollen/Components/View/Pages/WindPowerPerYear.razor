@@ -15,7 +15,7 @@
     <div class="text-box">
 
         <h3>Elproduktion per år</h3> 
-
+        <h5 style="margin-top: 20px; margin-bottom: 20px;">Total elproduktion från våra 21 regioners vindkraftverk. </h5>
         <select @bind="selectedYearOne">
             <option disabled value="0">-- Välj ett år --</option>
        
@@ -32,16 +32,15 @@
         {
             <option value="@year">@year</option>
         }
-        </select>
+        </select>  
 
         <button class="custom-button" @onclick="FetchTotalProduction">Hämta data</button>
 
         @if (totalProductionYearOne > 0 && totalProductionYearTwo > 0)
         {
-            <h5 style="margin-top: 20px;">Total elproduktion från våra 21 regioners vindkraftverk. </h5>
-            <p>År @selectedYearOne: <span style="text-decoration: underline;"> @totalProductionYearOne Mwh</span> @(calculateGwhAndTwh.CalculateResultsInGwhTwH(totalProductionYearOne))</p>
-            <p>År @selectedYearTwo: <span style="text-decoration: underline;"> @totalProductionYearTwo Mwh</span> @(calculateGwhAndTwh.CalculateResultsInGwhTwH(totalProductionYearTwo))</p>
-            <p>Skillnad i produktion mellan åren: <span style="text-decoration: underline;"> @productionDifference Mwh</span> @(calculateGwhAndTwh.CalculateResultsInGwhTwH(productionDifference))</p>
+            <p style="margin-top: 20px;">År @selectedYearOne = Mwh: @totalProductionYearOne | @(calculateGwhAndTwh.CalculateResultsInGwhTwH(totalProductionYearOne))</p>
+            <p>År @selectedYearTwo = Mwh: @totalProductionYearTwo | @(calculateGwhAndTwh.CalculateResultsInGwhTwH(totalProductionYearTwo))</p>
+            <p>Skillnad i produktion mellan åren = Mwh: @productionDifference | @(calculateGwhAndTwh.CalculateResultsInGwhTwH(productionDifference))</p>
         } 
      </div>
   </div>
@@ -54,13 +53,13 @@
     private int selectedYearTwo;
     private double totalProductionYearOne;
     private double totalProductionYearTwo;    
-    private double productionDifference; 
+    private double productionDifference;   
 
     [Inject]
     private ICalculateProductionDifference CalculateProductionDifference { get; set; } //Needs an interface to function of the isolated class with the method to be tested.
 
     private async Task FetchTotalProduction() // Show total production from region and year.
-    {
+    {              
         if (selectedYearOne == 0 || selectedYearTwo == 0)
         {
             // If none of these yeasr are selected

@@ -7,7 +7,7 @@
 
         public override string ToString() // For a more user-friendly representation of the object.
         {
-            return $"GWh: {Gwh}, TWh: {Twh}";
+            return $"Gwh: {Gwh} | Twh: {Twh}";
         }
     }
 }
