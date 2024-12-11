@@ -1,0 +1,64 @@
+﻿.centered-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+    background-image: url('/images/field-with-windmills.jpg');
+    background-size: cover;
+    background-position: center;
+    padding: 0px;
+    margin: 0px;
+    /*  padding-top: 20px; */
+    /* box-sizing: border-box; */
+    color: white
+}
+
+.custom-button {
+    background-color: white;
+    color: seagreen;
+    border: 1px solid black;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.text-box {
+    background-color: rgba(46, 139, 87, 0.6); /* Seagreen + transparens */
+    padding: 20px;
+    border-radius: 10px;
+    position: absolute; /* The box should be in front of the background imag */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Adjusts so that the box is exactly centered */
+    /* max-width: 100%; */ /* Maximum 90% of screen width */
+    /* min-width: 300px; */ /* Minimum width */
+    word-wrap: break-word; /* Make the text break if it is too long */
+}
+
+.comparison-symbol{
+    background: none;
+    padding-top: 1em;
+    font-size: xx-large;
+}
+
+.result {
+    display: flex;
+    gap: 16px; /* Adds space between the divs */
+    margin-top: 40px;
+}
+
+    .result > div {
+        border: 1px solid #ccc; /* Optional: Add a border for visual distinction */
+        padding: 8px;
+        flex: 1; /* Optional: Make the divs equal in width */  
+    }
+
+h3 {
+    font-weight: bold;
+}
+
+p {
+    font-weight: bold;

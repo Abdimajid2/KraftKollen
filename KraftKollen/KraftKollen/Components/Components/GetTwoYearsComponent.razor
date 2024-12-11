@@ -1,4 +1,5 @@
-<h3>Select Two Years to Compare</h3>
+
+<link href="custom.css" rel="stylesheet" />
 
 <select data-testid="year-one" @bind="selectedYearOne">
     @foreach (var year in years)
@@ -13,8 +14,9 @@
         <option value="@year">@year</option>
     }
 </select>
-<p>You selected: @selectedYearOne and @selectedYearTwo</p>
-<button data-testid="fetch-button" @onclick="FetchTwoYears">Hämta data</button>
+
+<p>Valda år: @selectedYearOne och @selectedYearTwo</p>
+<button data-testid="fetch-button" class="custom-button" @onclick="FetchTwoYears">Hämta data</button>
 
 
 @code {

@@ -3,26 +3,27 @@
 @using KraftKollen.Helpers
 @using KraftKollen.Components.Components
 @inject ICalculateProcentage calculateProcentage
-<h3>CalculatePercentageOfTotalProductionPage</h3>
-<div class="container">
-    <div class="component">
-        <GetDataByRegionComponent OnRegionsSelected="UpdateRegion"></GetDataByRegionComponent>
+ <link href="custom.css" rel="stylesheet"/>
+<div class="centered-content">
+    <div class="text-box">
+        <h3>Vindkraftens andel av total produktion</h3>
+        <div class="component">
+            <GetDataByRegionComponent OnRegionsSelected="UpdateRegion"></GetDataByRegionComponent>
+        </div>
+        <div class="component">
+            <GetDataByYearComponent OnYearSelected="UpdateYears"></GetDataByYearComponent>
+        </div>
+        @if (Percentage.HasValue)
+        {
+            <p>
+                Vindkraften står för <span style="text-decoration: underline;">@(Percentage?.ToString("F1"))%</span> av den totala elproduktionen under året @year.
+            </p>
+        }
+        else
+        {
+            <p class="error-message">@errormessage</p>
+        }
     </div>
-    <div class="component">
-        <GetDataByYearComponent OnYearSelected="UpdateYears"></GetDataByYearComponent>
-    </div>
-    
-
-    @if (Percentage.HasValue)
-    {
-        <p>
-            Vindkraften står för @(Percentage?.ToString("F1")) procent av den totala elproduktionen under året @year
-        </p>
-    }
-    else
-    {
-        <p>@errormessage</p>
-    }
 </div>
  
 @code {
@@ -65,72 +66,3 @@
         }
     }
 }
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f9f9f9;
-        margin: 0;
-        padding: 0;
-        color: #333;
-    }
-
-    h3 {
-        color: #0056b3;
-        text-align: center;
-        margin-top: 20px;
-        font-size: 1.8rem;
-    }
-
-  
-    .container {
-        max-width: 600px;
-        margin: 20px auto;
-        padding: 20px;
-        background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    p {
-        font-size: 1rem;
-        line-height: 1.5;
-        text-align: center;
-        color: #444;
-    }
-
-    .error-message {
-        color: red;
-        font-weight: bold;
-        text-align: center;
-    }
-
- 
-    .component {
-        margin-bottom: 20px;
-    }
-
-  
-    button {
-        background-color: #0056b3;
-        color: #fff;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 1rem;
-        margin-top: 10px;
-    }
-
-    button:hover {
-        background-color: #003d80;
-    }
-
-    input[type="text"], select {
-        width: calc(100% - 20px);
-        padding: 10px;
-        margin: 10px 0;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        font-size: 1rem;
-    }
-</style>

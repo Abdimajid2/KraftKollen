@@ -11,53 +11,58 @@
 @inject IApiService ApiService
 @inject IYearComparisonIndicator yearComparisonIndicator
 
-<h3>CompareTwoRegionsOutputView</h3>
+<link href="custom.css" rel="stylesheet" />
 
-<GetTwoYearsComponent OnTwoYearsSelected="GetYearsAsync" />
+<div class="centered-content">
+    <div class="text-box">
+        <h3>Jämför produktionen på två år</h3>
 
-<div class="container">
-    @if (_firstYearLargestValue != null)
-    {
-        <div>
-            <h3>@_firstYearLargestValue.Year</h3>
-            <p>@_firstYearLargestValue.Name: @_firstYearLargestValue.Value MWh</p>
+        <GetTwoYearsComponent OnTwoYearsSelected="GetYearsAsync" />
+
+
+        <div class="result">
+            @if (_firstYearLargestValue != null)
+            {
+                <div>
+                    <h3>@_firstYearLargestValue.Year</h3>
+                    <p>@_firstYearLargestValue.Name: @_firstYearLargestValue.Value MWh</p>
+                </div>
+            }
+
+            @* TODO: These are not null since they are initialized as new() *@
+            @if (_firstYearLargestValue != null && _secondYearLargestValue != null)
+            {
+                // Returns a string depending on if any value is greater than the other
+                var arrow = yearComparisonIndicator.GetYearComparisonIndicator(_firstYearLargestValue.Value, _secondYearLargestValue.Value);
+
+                switch (arrow)
+                {
+                    case "Left":
+                        <h3 class="alert-danger comparison-symbol"> &larr; </h3>
+                        break;
+
+                    case "Equal":
+                        <h3 class="alert-info comparison-symbol"> &equals; </h3>
+                        break;
+                    case "Right":
+                        <h3 class="alert-success comparison-symbol"> &rarr; </h3>
+                        break;
+                    default:
+                        <h3> Could not validate data </h3>
+                        break;
+                }
+            }
+
+            @if (_secondYearLargestValue?.Value != null)
+            {
+                <div>
+                    <h3>@_secondYearLargestValue.Year</h3>
+                    <p>@_secondYearLargestValue.Name: @_secondYearLargestValue.Value MWh</p>
+                </div>
+            }
         </div>
-    }
+    </div>
 
-    @* TODO: These are not null since they are initialized as new() *@
-    
-    @if (_firstYearLargestValue != null && _secondYearLargestValue != null)
-    {
-        
-        // Returns a string depending on if any value is greater than the other
-        var arrow = yearComparisonIndicator.GetYearComparisonIndicator(_firstYearLargestValue.Value, _secondYearLargestValue.Value);
-        <div data-testid="comparison-symbol">
-        @switch (arrow)
-        {
-            case "Left":
-                <h3 data-testid="left-arrow" class="alert-danger"> &larr; </h3>
-                break;
-
-            case "Equal":
-                <h3 data-testid="equal" class="alert-info"> &equals; </h3>
-                break;
-            case "Right":
-                <h3 data-testid="right-arrow" class="alert-success"> &rarr; </h3>
-                break;
-            default:
-                <h3> Could not validate data </h3>
-                break;
-        }
-        </div>
-    }
-
-    @if (_secondYearLargestValue?.Value != null)
-    {
-        <div>
-            <h3>@_secondYearLargestValue.Year</h3>
-            <p>@_secondYearLargestValue.Name: @_secondYearLargestValue.Value MWh</p>
-        </div>
-    }
 </div>
 
 @code {
@@ -106,12 +111,12 @@
             {
                 // If the value of the new region is greater than the currently largest, it assigns the new values
                 updatedRegion = new()
-                {
-                    Value = result.Value,
-                    Year = regionWithLargestValue.Year,
-                    Id = id,
-                    Name = regions.FirstOrDefault(n => n.Id == id)?.Name ?? "Could not get name"
-                };
+                    {
+                        Value = result.Value,
+                        Year = regionWithLargestValue.Year,
+                        Id = id,
+                        Name = regions.FirstOrDefault(n => n.Id == id)?.Name ?? "Could not get name"
+                    };
             }
         }
 
@@ -156,19 +161,5 @@
         }
     }
 
-    
+
 }
-
-
-<style>
-    .container {
-        display: flex;
-        gap: 16px; /* Adds space between the divs */
-    }
-
-        .container > div {
-            border: 1px solid #ccc; /* Optional: Add a border for visual distinction */
-            padding: 8px;
-            flex: 1; /* Optional: Make the divs equal in width */
-        }
-</style>

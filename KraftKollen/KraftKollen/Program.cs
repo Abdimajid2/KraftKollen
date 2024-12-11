@@ -31,6 +31,7 @@ public class Program
         builder.Services.AddScoped<IAverageProduction, AverageProduction>();
         builder.Services.AddAutoMapper(typeof(MappingProfile));
         builder.Services.AddScoped<ICalculateProductionDifference, CalculateProductionDifference>();
+        builder.Services.AddScoped<ICalculateResultsInGwhAndTwh, CalculateResultsInGwhAndTwh>();
 
         var app = builder.Build();
         

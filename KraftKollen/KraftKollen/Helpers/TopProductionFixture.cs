@@ -3,7 +3,7 @@ using KraftKollen.Models;
 
 namespace KraftKollen.Helpers
 {
-    public class TopProductionFixture
+    public class TopProductionFixture  // Fixture test class to test TopProduction.
     {
         public ITopProduction ProductionAnalyzer { get; private set; }
         public List<WindPowerProduction> SampleProductionData { get; private set; }

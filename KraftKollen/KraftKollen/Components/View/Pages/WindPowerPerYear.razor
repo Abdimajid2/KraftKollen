@@ -4,42 +4,47 @@
 @using KraftKollen.Repository
 @using KraftKollen.Repository.Models
 @using KraftKollen.Helpers.Interfaces
+@inject ICalculateResultsInGwhAndTwh calculateGwhAndTwh 
 @inject IApiService apiService
-
-
 
 @page "/WindPowerPerYear"
 
+<link href="custom.css" rel="stylesheet" />
 
-    <h3>Elproduktion per år</h3> 
+<div class="centered-content">
+    <div class="text-box">
 
-    <select @bind="selectedYearOne">
-        <option disabled value="0">-- Välj ett år --</option>
+        <h3>Elproduktion per år</h3> 
+
+        <select @bind="selectedYearOne">
+            <option disabled value="0">-- Välj ett år --</option>
        
+            @foreach (var year in years)
+            {
+            <option value="@year">@year</option>
+            }
+        </select>
+
+        <select @bind="selectedYearTwo">
+        <option disabled value="0">-- Välj ett år --</option>
+
         @foreach (var year in years)
         {
-        <option value="@year">@year</option>
+            <option value="@year">@year</option>
         }
-    </select>
+        </select>
 
-    <select @bind="selectedYearTwo">
-    <option disabled value="0">-- Välj ett år --</option>
+        <button class="custom-button" @onclick="FetchTotalProduction">Hämta data</button>
 
-    @foreach (var year in years)
-    {
-        <option value="@year">@year</option>
-    }
-    </select>
-
-    <button @onclick="FetchTotalProduction">Hämta data</button>
-
-    @if (totalProductionYearOne > 0 && totalProductionYearTwo > 0)
-    {
-        <h5 style="margin-top: 20px;">Total elproduktion från våra 21 regioners vindkraftverk. </h5>
-        <p>År: @selectedYearOne: @totalProductionYearOne Mwh (@(CalculateResultInGigaWatt(totalProductionYearOne)) Gwh)</p>
-        <p>År: @selectedYearTwo: @totalProductionYearTwo Mwh (@(CalculateResultInGigaWatt(totalProductionYearTwo)) Gwh).</p>
-        <p>Skillnad i produktion mellan åren: @productionDifference Mwh (@(CalculateResultInGigaWatt(productionDifference)) Gwh)</p>    
-    }  
+        @if (totalProductionYearOne > 0 && totalProductionYearTwo > 0)
+        {
+            <h5 style="margin-top: 20px;">Total elproduktion från våra 21 regioners vindkraftverk. </h5>
+            <p>År @selectedYearOne: <span style="text-decoration: underline;"> @totalProductionYearOne Mwh</span> @(calculateGwhAndTwh.CalculateResultsInGwhTwH(totalProductionYearOne))</p>
+            <p>År @selectedYearTwo: <span style="text-decoration: underline;"> @totalProductionYearTwo Mwh</span> @(calculateGwhAndTwh.CalculateResultsInGwhTwH(totalProductionYearTwo))</p>
+            <p>Skillnad i produktion mellan åren: <span style="text-decoration: underline;"> @productionDifference Mwh</span> @(calculateGwhAndTwh.CalculateResultsInGwhTwH(productionDifference))</p>
+        } 
+     </div>
+  </div>
 
 @code {
 
@@ -50,29 +55,29 @@
     private double totalProductionYearOne;
     private double totalProductionYearTwo;    
     private double productionDifference; 
-    
+
     [Inject]
-    private ICalculateProductionDifference CalculateProductionDifference { get; set; } //Behöver ett interface för att fungera  av  den isolerade klassen med metoden som ska testas.
-       
-    private async Task FetchTotalProduction() // Hämtar total produktion från region och år
+    private ICalculateProductionDifference CalculateProductionDifference { get; set; } //Needs an interface to function of the isolated class with the method to be tested.
+
+    private async Task FetchTotalProduction() // Show total production from region and year.
     {
         if (selectedYearOne == 0 || selectedYearTwo == 0)
         {
-            // Om inget av �ren valts
+            // If none of these yeasr are selected
             totalProductionYearOne = selectedYearOne == 0 ? 0 : totalProductionYearOne;
             totalProductionYearTwo = selectedYearTwo == 0 ? 0 : totalProductionYearTwo;
             return;
         }
 
-        // Visa om båda åren valts
+        // Show if both years are selected
         totalProductionYearOne = await CalculateTotalProductionForYear(selectedYearOne);
         totalProductionYearTwo = await CalculateTotalProductionForYear(selectedYearTwo);
 
-        // Beräknar skillnaden av produktion
+        // Difference of production
         productionDifference = CalculateProductionDifference.CalculateDifference(totalProductionYearOne, totalProductionYearTwo);
     }
 
-    // Beräkna totalproduktion per år
+    // Calculates the total production of electricity per region and year.
     private async Task<double> CalculateTotalProductionForYear(int year)
     {
         double total = 0;
@@ -82,7 +87,7 @@
         {
             try
             {
-                // Hämta data för regionen och året
+                // Download data for the region and the year.
                 var production = await GetWindPowerProduction(region.Id, year.ToString());
 
                 if (production.Value != null)
@@ -97,14 +102,9 @@
         }
 
         return total;
-    }
+    }     
 
-    private double CalculateResultInGigaWatt(double value) // Beräknar Mwh till Ghw
-    {
-        return value / 1000;
-    }    
-
-    public async Task<WindPowerProduction> GetWindPowerProduction(string regionId, string year)
+    public async Task<WindPowerProduction> GetWindPowerProduction(string regionId, string year) // Fetch wind production per region and year.
     {
         var windpower = await apiService.GetWindPowerProduction(regionId, year);
         return windpower;

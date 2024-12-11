@@ -2,6 +2,9 @@ name: PR Test Failure Reporter
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches:
+      - main
 
 jobs:
   test-and-report:
@@ -11,39 +14,76 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup .NET
+      - name: Setup .NET 
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0'
-          
+
       - name: Run Tests and Generate xUnit Results
-        id: run-tests
         run: |
           mkdir -p test_results
-          dotnet test KraftKollen/KraftKollen.Tests/KraftKollen.Tests.csproj --logger "xunit;LogFileName=test_results/results.xml" || echo "Tests failed"
-        continue-on-error: true
-
-      - name: Extract Test Failures
+          # Kör tester och skapa logg
+          dotnet test KraftKollen/KraftKollen.Tests/KraftKollen.Tests.csproj --logger "xunit;LogFileName=test_results/results.xml" > test_results/test_log.txt 2>&1
+          echo "Contents of test_results directory after running tests:"
+          ls -l test_results
+      - name: Upload Test Results
         if: failure()
-        id: extract-failures
-        run: |
-          grep -oP '<failure message=.*?>.*?</failure>' test_results/results.xml > test_results/failures_summary.txt || echo "No failures found"
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: test_results
 
-      - name: Format Test Failures for Comment
-        if: failure()
+  add-comment-to-pr:
+    runs-on: ubuntu-latest
+    if: failure()
+    needs: test-and-report
+    permissions:
+      pull-requests: write  # Behörighet att skriva kommentarer till PR
+      contents: read        # Behörighet att läsa innehåll i repot
+
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: test-results
+
+      - name: Verify Downloaded Files
         run: |
-          echo "### ❌ Test Failures Summary" > comment.md
-          echo "#### Below are the failed tests:" >> comment.md
-          while read -r line; do
-            message=$(echo "$line" | sed -E 's/<failure message="(.*?)">.*/\1/')
-            echo "- $message" >> comment.md
-          done < test_results/failures_summary.txt
-          echo "For full details, check the [workflow logs](${{ github.run_url }})." >> comment.md
-          
+          echo "Listing all files after artifact download:"
+          ls -R
+          echo "Checking for test_log.txt in root directory:"
+          if [ -f "test_log.txt" ]; then
+            echo "test_log.txt found"
+          else
+            echo "test_log.txt not found"
+            exit 1
+          fi
+      - name: Extract and Format Test Failures
+        id: format-comment
+        run: |
+          echo "Extracting test failures..."
+          formatted_comment="### ❌ Test Failures Summary\n"
+           awk '
+            /Failed/ {
+              in_failure_block = 1
+              test_name = substr($0, index($0, "]") + 2)
+              formatted_failure = "#### Test: " test_name "\n"
+            }
+            in_failure_block {
+              formatted_failure = formatted_failure $0 "\n"
+              if ($0 ~ /Stack Trace:/) {
+                print formatted_failure
+                in_failure_block = 0
+              }
+            }
+          ' test_log.txt > extracted_failures.txt
+
+          formatted_comment+=$(cat extracted_failures.txt)
+          echo "formatted_comment<<EOF" >> $GITHUB_ENV
+          echo -e "$formatted_comment" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
       - name: Comment on Pull Request
-        if: failure()
         uses: thollander/actions-comment-pull-request@v1
         with:
-          message: |
-            $(cat comment.md)
+          message: ${{ env.formatted_comment }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

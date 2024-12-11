@@ -5,17 +5,17 @@ using System.Threading;
 namespace KraftKollen.Helpers
 {
 
-    public class TrendCalculator : ITrendCalculator
+    public class TrendCalculator : ITrendCalculator  // TrendCalculator implements the interface and is used to calculate the trend of wind power production
     {
         public string CalculateTrend(List<WindPowerProduction> data)
         {
             if (data.Count < 2)
             {
-                return "Kan ej hitta trend.";
+                return "Kan ej hitta trend.";   // If we have less than two data points we can't calculate a trend
             }
 
             
-            var sortedData = data.OrderBy(d => d.Period).ToList();
+            var sortedData = data.OrderBy(d => d.Period).ToList(); // Sort data by year (Period), so we have the oldest data point first
 
             var firstValue = sortedData.First().Value;
             var lastValue = sortedData.Last().Value;
@@ -23,7 +23,7 @@ namespace KraftKollen.Helpers
 
             if (lastValue > firstValue)
             {
-                return "Trendens stiger!";
+                return "Trenden stiger!";
             }
             else if (lastValue < firstValue)
             {
