@@ -11,6 +11,12 @@ public class AverageProduction : IAverageProduction
         _apiService = apiService;
     }
  
+    /// <summary>
+    /// Calculates the average production for certain region over years 
+    /// </summary>
+    /// <param name="regionId"></param>
+    /// <param name="years"></param>
+    /// <returns></returns>
     public async Task<double> ProductionForYears(string regionId, List<string> years)
     {
         var productionValue = new List<double>();
@@ -22,10 +28,6 @@ public class AverageProduction : IAverageProduction
                 productionValue.Add((double)data.Value);
             }
         }
-
-
-
-
         return productionValue.Any() ? productionValue.Average() : 0;
     }
 }

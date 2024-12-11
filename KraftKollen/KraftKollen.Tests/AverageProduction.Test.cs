@@ -19,7 +19,7 @@ public class AverageProduction_Test
         var mockapi = new Mock<IApiService>();
         for (int i = 0; i < years.Length; i++)
         {
-            //om i är större än 0, retunera värdet annars null
+            //if i is bigger than 0 return the value otherwise return null
             double? value = productionValue[i] > 0 ? productionValue[i] : null;
 
             mockapi.Setup(api => api.GetWindPowerProduction(regionId, years[i]))
