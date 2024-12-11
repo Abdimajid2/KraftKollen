@@ -12,6 +12,12 @@ public class CalculateProcentage : ICalculateProcentage
         
     }
 
+    /// <summary>
+    /// calculates the percentage of wind powerproduction of the total powerproduction
+    /// </summary>
+    /// <param name="regionId"></param>
+    /// <param name="year"></param>
+    /// <returns></returns>
     public async Task<double?> CalculateProcentageOfTotalProduction(string regionId, string year)
     {
         var totalProduction = await _apiService.GetTotalPowerProduction(regionId, year);
