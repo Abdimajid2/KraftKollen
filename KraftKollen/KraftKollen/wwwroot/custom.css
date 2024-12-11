@@ -12,6 +12,113 @@
     color: white
 }
 
+
+.background-startpage {
+    height: 100vh;
+    background-image: url('/images/windturbines_darksunset.jpg');
+    background-size: cover;
+    background-position: center;
+    display: flex; 
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.map-image-startpage {
+    position: absolute;
+    top: 10%;
+    right: 30%;
+    max-width: 20%;
+    height: auto;
+    opacity: 0.6;  
+}
+
+
+.custom-toptext-startpage {
+    position: absolute;
+    font-size: 1.2rem;
+    color: white;
+    text-align: left;
+    top: 10%;
+    margin-bottom: 5%;  
+}
+
+.custom-headlinetext-startpage {
+    position: absolute;
+    font-size: clamp(2rem, 8vw, 4rem);
+    font-weight: bold;
+    color: white;
+    text-align: left;
+    top: 12%;
+    margin: 10px 0;  
+}
+
+.custom-bottomtext-startpage {
+    position: absolute;
+    font-size: 1rem;
+    color: white;
+    text-align: left;
+    top: 28%;
+    margin: 10px 0;   
+}
+
+.custom-linktext-startpage {
+    position: absolute;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-start;
+    top: 35%;  
+}
+
+.custom-linktext-startpage a {
+    font-size: 0.9rem;
+    text-decoration: underline;
+    color: white;
+    text-align: left;   
+}
+
+/* Responsive start page customization */
+@media (max-width: 768px) {
+    .map-image {
+        position: static;
+        max-width: 60%;
+        margin-bottom: 15px;
+    }
+
+    .custom-toptext-startpage,
+    .custom-bottomtext-startpage {
+        font-size: 1rem;
+    }
+
+    .custom-linktext-startpage {
+        gap: 5px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+        .custom-linktext-startpage a {
+            font-size: 0.8rem;
+        }
+}
+
+@media (max-width: 480px) {
+    .map-image {
+        max-width: 80%;
+    }
+    
+    .custom-headlinetext-startpage {
+        font-size: clamp(1.5rem, 8vw, 3rem);
+    }
+    .custom-toptext-hstartpage,
+    .custom-bottomtext-startpage {
+        font-size: 0.8rem;
+    }
+}
+
 .custom-button {
     background-color: white;
     color: seagreen;
@@ -30,9 +137,7 @@
     position: absolute; /* The box should be in front of the background imag */
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%); /* Adjusts so that the box is exactly centered */
-    /* max-width: 100%; */ /* Maximum 90% of screen width */
-    /* min-width: 300px; */ /* Minimum width */
+    transform: translate(-50%, -50%); /* Adjusts so that the box is exactly centered */    
     word-wrap: break-word; /* Make the text break if it is too long */
 }
 
