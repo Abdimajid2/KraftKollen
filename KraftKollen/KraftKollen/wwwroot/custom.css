@@ -8,9 +8,7 @@
     background-size: cover;
     background-position: center;
     padding: 0px;
-    margin: 0px;
-    /*  padding-top: 20px; */
-    /* box-sizing: border-box; */
+    margin: 0px;  
     color: white
 }
 
@@ -41,21 +39,21 @@
 
 .custom-toptext-startpage {
     position: absolute;
-    font-size: 1.2rem;
+    font-size: 1.2rem; /*The font size should be 1.2 times the base value, refers to the font size defined for the root*/
     color: white;
     text-align: left;
     top: 10%;
-    margin-bottom: 5%;  
+    margin-bottom: 5%;
 }
 
 .custom-headlinetext-startpage {
     position: absolute;
-    font-size: clamp(2rem, 8vw, 4rem);
+    font-size: clamp(2rem, 8vw, 4rem); /*Is used to create a responsive font size*/
     font-weight: bold;
     color: white;
     text-align: left;
     top: 12%;
-    margin: 10px 0;  
+    margin: 10px 0;
 }
 
 .custom-bottomtext-startpage {
@@ -70,10 +68,10 @@
 .custom-linktext-startpage {
     position: absolute;
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: wrap; /*To determine how flex objects should handle line breaks*/
     gap: 10px;
     justify-content: flex-start;
-    top: 35%;  
+    top: 35%;
 }
 
 .custom-linktext-startpage a {
@@ -81,44 +79,6 @@
     text-decoration: underline;
     color: white;
     text-align: left;   
-}
-
-/* Responsive start page customization */
-@media (max-width: 768px) {
-    .map-image {
-        position: static;
-        max-width: 60%;
-        margin-bottom: 15px;
-    }
-
-    .custom-toptext-startpage,
-    .custom-bottomtext-startpage {
-        font-size: 1rem;
-    }
-
-    .custom-linktext-startpage {
-        gap: 5px;
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-        .custom-linktext-startpage a {
-            font-size: 0.8rem;
-        }
-}
-
-@media (max-width: 480px) {
-    .map-image {
-        max-width: 80%;
-    }
-    
-    .custom-headlinetext-startpage {
-        font-size: clamp(1.5rem, 8vw, 3rem);
-    }
-    .custom-toptext-hstartpage,
-    .custom-bottomtext-startpage {
-        font-size: 0.8rem;
-    }
 }
 
 .custom-button {
@@ -129,17 +89,17 @@
     font-size: 16px;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    /*transition: background-color 0.3s ease;*/
 }
 
 .text-box {
-    background-color: rgba(46, 139, 87, 0.6); /* Seagreen + transparens */
+    background-color: rgba(46, 139, 87, 0.6); /* Seagreen + transparency */
     padding: 20px;
     border-radius: 10px;
-    position: absolute; /* The box should be in front of the background imag */
+    position: absolute; /* The box should be in front of the background img */
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%); /* Adjusts so that the box is exactly centered */    
+    transform: translate(-50%, -50%); /* Adjusts so that the box is exactly centered */
     word-wrap: break-word; /* Make the text break if it is too long */
 }
 
@@ -167,3 +127,43 @@ h3 {
 
 p {
     font-weight: bold;
+}
+
+/* Responsive start page customization */
+@media (max-width: 768px) {
+    .map-image {
+         position: static;
+         max-width: 60%;
+         margin-bottom: 15px;
+    }
+
+    .custom-toptext-startpage,
+    .custom-bottomtext-startpage {
+         font-size: 1rem;
+    }
+
+    .custom-linktext-startpage {
+         gap: 5px;
+         flex-direction: column;
+         align-items: flex-start;
+    }
+
+    .custom-linktext-startpage a {
+         font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .map-image {
+        max-width: 80%;
+    }
+
+    .custom-headlinetext-startpage {
+        font-size: clamp(1.5rem, 8vw, 3rem);
+    }
+
+    .custom-toptext-hstartpage,
+    .custom-bottomtext-startpage {
+            font-size: 0.8rem;
+    }
+}
