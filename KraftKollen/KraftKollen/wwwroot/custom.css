@@ -39,7 +39,7 @@
 
 .custom-toptext-startpage {
     position: absolute;
-    font-size: 1.2rem; /*The font size should be 1.2 times the base value, refers to the font size defined for the root*/
+    font-size: 1.2rem; /*The font size should be 1.2 times the base value, refers to the font size defined in root*/
     color: white;
     text-align: left;
     top: 10%;
@@ -127,6 +127,14 @@ h3 {
 
 p {
     font-weight: bold;
+}
+
+.icon {
+    font-size: 1.5rem; /* Makes the icon bigger */
+    line-height: 1; /* Adjust row spacing for better centering */
+    margin-right: 0.6rem; /* Add spaces to the nav text */
+    display: inline-flex; /* Maintains flexibility when centering */
+    align-items: center;
 }
 
 /* Responsive start page customization */
