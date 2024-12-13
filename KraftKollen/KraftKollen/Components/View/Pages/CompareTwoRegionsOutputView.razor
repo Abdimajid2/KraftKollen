@@ -134,6 +134,7 @@
 
     private bool IsValidInput(string region, string year)
     {
+        // Checks that region and year have a value
         if (string.IsNullOrEmpty(region) || string.IsNullOrEmpty(year))
         {
             return false;
@@ -145,6 +146,8 @@
     private async Task<WindPowerProduction> FetchWindPowerDataAsync(string region, string year)
     {
         var result = IsValidInput(region, year);
+        
+        // If value is not valid return empty model
         if (!result)
         {
             return new();
@@ -152,6 +155,7 @@
 
         try
         {
+            // Return model from api service
             return await ApiService.GetWindPowerProduction(region, year);
         }
         catch (Exception ex)

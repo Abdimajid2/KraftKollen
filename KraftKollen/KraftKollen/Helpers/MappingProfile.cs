@@ -8,6 +8,7 @@ namespace KraftKollen.Helpers
     {
         public MappingProfile()
         {
+            // Maps Municipality, Period and value to domain/view model
             CreateMap<WindPowerProductionDTO, WindPowerProduction>()
                     .ForMember(dest => dest.Municipality, opt => opt.MapFrom(src =>
                         src.values != null && src.values.Any() ? src.values.First().municipality : null))
