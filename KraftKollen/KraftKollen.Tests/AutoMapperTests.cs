@@ -10,6 +10,7 @@ namespace KraftKollen.Tests
 {
     public class AutoMapperTests
     {
+        // Validates that DTO can map to Domain/View model
         [Fact]
         public void AutoMapper_Configuration_IsValid()
         {
